@@ -1,0 +1,34 @@
+name: cloudflare pages
+
+on:
+    push:
+      branches:
+        - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Run a build step here if your project requires
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v1
+        with:
+          mdbook-version: 'latest'
+      - run: mdbook build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: b1721f81ad0d3eecf8aa1ac29588ede8
+          projectName: pros-rs-internals
+          directory: book
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
