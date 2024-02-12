@@ -11,7 +11,7 @@ as most users will already have these installed if they are using Rust.
 Attempts have been made at using only llvm for linking, stripping, and `objcopy`ing
 (see PR [#84](https://github.com/pros-rs/pros-rs/pull/84)).
 Ultimately all attempts have failed because of a `libgcc` dependent unwinding implementation in PROS
-and strange, likely linker, related memory access violation issues in FreeRTOS task switching code.
+and strange, likely linker related, memory access violation issues in FreeRTOS task switching code.
 It could still technically be done if we manually patched `libpros`'
 unwinding implementation to be indapendent of `libgcc`
 and figured out what what caused the memory access violations,
@@ -28,5 +28,5 @@ In order to not depend on GCC or `libgcc` we need to:
 * strip everything related to `libgcc` from `libpros`
 * update the `V5` linker scripts to work with LLVM
 
-PR [#84](https://github.com/pros-rs/pros-rs/pull/84) does a few of these things,
+PR [#84](https://github.com/pros-rs/pros-rs/pull/84) does a couple of these things,
 so check it out if you want to try getting this working.
