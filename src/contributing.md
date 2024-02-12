@@ -1,5 +1,8 @@
 # Contributing
 
+This chapter aims to give tips to first time pros-rs contributors.
+For info on contributing guidelines, please read [CONTRIBUTING.md](https://github.com/pros-rs/pros-rs/blob/main/CONTRIBUTING.md) in the pros-rs repository.
+
 ## Project structure
 
 Because pros-rs is split into multiple crates and multiple repositories,
