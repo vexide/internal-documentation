@@ -1,6 +1,7 @@
 # Contributing
 
 This chapter aims to give tips to first time pros-rs contributors.
+If you want to contribute to pros-rs, make sure you [join the discord server](https://discord.com/invite/8WR4X4AGVg)!
 For info on contributing guidelines, please read [CONTRIBUTING.md](https://github.com/pros-rs/pros-rs/blob/main/CONTRIBUTING.md) in the pros-rs repository.
 
 ## Project structure
