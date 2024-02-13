@@ -9,7 +9,7 @@ You can pass the pros-rs task spawning API any type implementing `FnOnce() + Sen
 and general info about the task.
 This is significantly better because it means that you can use closures
 and rust calling convention function pointers.
-This is a huge improvement because you can avoid code like this:
+You can avoid code like this:
 ```rust
 unsafe extern "C" fn simple_task(args: *mut core::ffi::c_void) {
     let args: Box<String> = unsafe { Box::from_raw(args as *mut _) };
@@ -36,8 +36,9 @@ specifically the `TaskEntrypoint::cast_and_call_external` function.
 
 ### Drawbacks
 
-The biggest drawback of this implementation is that the functions passed by the user need to be put on the heap.
-If you pass a closure that closes over 100MB of data, pros-rs will allocate 100MB of data on the heap
-just to spawn your task.
-Honestly speaking, it would take a pretty huge performance issue to outweight the ease of use
-that this implementation brings.
+The biggest drawback of this implementation is that the functions passed by the user need to be copied to the heap.
+If you pass a closure that closes over 100MB of data, pros-rs will copy 100MB
+of data to the heap just to spawn your task.
+Honestly speaking this is a tiny slowdown
+and it would take a pretty huge performance issue to outweight
+the ease of use that this implementation brings.
