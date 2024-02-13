@@ -33,3 +33,11 @@ putting them on the heap, and then passing them through the arguments pointer
 to a pros-rs `extern "C"` function that calls your function in the newly created task. 
 The majority takes place in `TaskEntrypoint`,
 specifically the `TaskEntrypoint::cast_and_call_external` function.
+
+### Drawbacks
+
+The biggest drawback of this implementation is that the functions passed by the user need to be put on the heap.
+If you pass a closure that closes over 100MB of data, pros-rs will allocate 100MB of data on the heap
+just to spawn your task.
+Honestly speaking, it would take a pretty huge performance issue to outweight the ease of use
+that this implementation brings.
