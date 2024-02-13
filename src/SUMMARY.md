@@ -7,3 +7,4 @@
   - [Hot/Cold Linking](./hard-to-implement/hot-cold.md)
 - [Technical Implementations](./technical/REAMDE.md)
   - [Task Local Storage](./technical/tls.md)
+  - [Task Spawning](./technical/task-spawn.md)
