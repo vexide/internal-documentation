@@ -29,7 +29,7 @@ The panic implementation does not perform stack unwinding or any cleanup, as `ar
 
 ## Unwinding on ARM
 
-As it turns out, it might be possible to support `"panic_strategy": "unwind"` on our bare metal ARM target. PROS links against `libgcc`, which defines primitives for dealing with exception handling, including the parts needed to implement an unwinding panic handler in Rust. Unfortunately, stack unwinding has a very complicated and advanced implementation. The best we have to go off of is the [`libpanic`'s implementation on top of libgcc](https://github.com/rust-lang/rust/blob/c57393e4f8b88444fbf0985a81a2d662862f2733/library/std/src/sys/personality/gcc.rs).
+As it turns out, it might be possible to support `"panic_strategy": "unwind"` on our bare metal ARM target. PROS links against `libgcc`, which defines primitives for dealing with exception handling, including the parts needed to implement an unwinding panic handler in Rust. Unfortunately, stack unwinding has a very complicated and advanced implementation. The best we have to go off of is the [`libpanic` implementation over `libgcc`](https://github.com/rust-lang/rust/blob/c57393e4f8b88444fbf0985a81a2d662862f2733/library/std/src/sys/personality/gcc.rs) used internally by rustc.
 
 Essentially, in order to implement an unwinding panic, we must first override the `eh_personality` language item which is called by Rust internally when panicking using `unwind`. The `#[eh_personality]` routine is then responsible for hooking into libgcc's ARM unwinding functions for actually unwinding the stack. These functions are actually part of the [Itanium C++ Exception Handling ABI](https://itanium-cxx-abi.github.io/cxx-abi/abi-eh.html).
 
