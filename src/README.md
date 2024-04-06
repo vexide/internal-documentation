@@ -1,6 +1,6 @@
 # Overview
 
-Pros-rs internal documentation includes information for first time contributors,
+vexide internal documentation includes information for first time contributors,
 technical details about features we want to implement,
 technical explanations of already implemented features,
 current priorities, and more. 
