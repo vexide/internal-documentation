@@ -10,9 +10,12 @@ The boot process for programs works as such:
 3) VEXos starts program execution at 0x3800020 (the address just after the cold header)
 4) vexide zeroes the entire BSS section and sets the stack pointer to the bottom of the stack
 5) vexide initializes the heap allocator
-6) vexide starts the async executor and the users main function inside it 
+6) vexide starts the async executor and the users main function inside it
 
 ## Explanations
+
+The structure of a user program looks like this:
+![program-anatomy](./program-anatomy.png)
 
 In order to explain the startup code, I will be going over every one of these six steps and how they are implemented.
 
