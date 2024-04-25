@@ -9,10 +9,10 @@ The custom implementation works by placing a pointer to a pros-rs TLS type in th
 Pros-rs puts this always pointer in slot 0 of tls so that we can easily find it.\
 Here is a flow chart that goes over the basic idea of the implementation:  
 ![pros-tls flowchart](./tls-flow.svg)
-In order to guarentee that every `LocalKey` has a unique index into the pros-rs TLS that works on every task,
+In order to guarantee that every `LocalKey` has a unique index into the pros-rs TLS that works on every task,
 a static atomic u32 is used as a semaphore.
 Every time a `LocalKey` is created it will get the current value of the next index semaphore and increment it by one.
-the index that it got from the semaphore is guarenteed to be unique on all threads because the semaphore is static and atomic.
+the index that it got from the semaphore is guaranteed to be unique on all threads because the semaphore is static and atomic.
 
 ### Drawbacks
 

@@ -19,7 +19,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
   - color: integer
 - ScreenClear: Fill the entire screen with one color. `ScreenClear` fields:
   - color: integer
-- `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` feilds:
+- `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` fields:
   - enable: boolean
 - `ScreenRender`: Flush the screens double buffer if screen double buffering is enabled.
 - `VCodeSig`: Sends info about the program header. Implementation details surrounding how this should be stored are TBD.
@@ -35,31 +35,31 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `RobotPose`: The physically simulated robot has moved. `RobotPose` fields:
   - x: float
   - y: float
-- `RobotState`: The state of the physically simulated robot has cahnged. Implementation is TBD.
+- `RobotState`: The state of the physically simulated robot has changed. Implementation is TBD.
 - `Log`: Log a message. This is not to be used in place of serial. This is purely for messages from the backend itself. `Log` fields:
   - level: [LogLevel](#logLevel)
   - message: UTF8 encoded string.
-- `VEXNetConnect`: Tell the, currently nonexistant, VEXNet server to open a VEXNet connection. `VEXNetConnect` fields:
+- `VEXLinkConnect`: Tell the, currently nonexistent, VEXLink server to open a VEXLink connection. `VEXLinkConnect` fields:
   - port: [SmartPort](#smartport).
   - id: string (unhashed id)
   - mode: [LinkMode](#linkmode)
   - override: boolean
-- `VEXNetDisconnect`: Tell the VEXNet server that the vexlink connection has been terminated. Fields:
+- `VEXLinkDisconnect`: Tell the VEXLink server that the VEXLink connection has been terminated. Fields:
   - port: [SmartPort](#smartport).
   
 ## Commands
 
-Commands are sent from the frotend to the backend and signal for specific actions to be performed.
+Commands are sent from the frontend to the backend and signal for specific actions to be performed.
 
 - `Touch`: Touch a point on the screen. Only one touch can be registered on the Brain display. `Touch` fields:
   - pos: [Point](#point)
   - event: [TouchEvent](#touchevent)
 - `ControllerUpdate`: TBD
 - `USD`: TBD
-- `VEXNetOpened`: The VEXNet server has successfully opened a connection. Fields:
+- `VEXLinkOpened`: The VEXLink server has successfully opened a connection. Fields:
   - port: [SmartPort](#smartport).
   - mode: [LinkMode](#linkmode)
-- `VEXNetClosed`: The VEXNet server has closed a VEXLink connection. Fields:
+- `VEXLinkClosed`: The VEXLink server has closed a VEXLink connection. Fields:
   - port: [SmartPort](#smartport).
 - `CompetitionMode`: Update the competition mode. Fields:
   - connected: boolean

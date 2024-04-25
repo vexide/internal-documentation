@@ -40,5 +40,5 @@ The biggest drawback of this implementation is that the functions passed by the 
 If you pass a closure that closes over 100MB of data, pros-rs will copy 100MB
 of data to the heap just to spawn your task.
 Honestly speaking this is a tiny slowdown
-and it would take a pretty huge performance issue to outweight
+and it would take a pretty huge performance issue to outweigh
 the ease of use that this implementation brings.
