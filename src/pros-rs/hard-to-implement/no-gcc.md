@@ -1,6 +1,6 @@
-# GCC independance
+# GCC independence
 
-The pros-rs build process (the `armv7a-vexos-eabi` target and `cargo-pros`) depends on the Arm GNU toolchain (`arm-none-eabi-gcc`)
+The pros-rs build process (the `armv7a-VEXos-eabi` target and `cargo-pros`) depends on the Arm GNU toolchain (`arm-none-eabi-gcc`)
 for linking and transforming output ELF executables
 produced by Rust into binaries that can be run on a brain.
 This dependency is less than ideal because the Arm GNU toolchain is **BIG**.
@@ -13,7 +13,7 @@ Attempts have been made at using only llvm for linking, stripping, and `objcopy`
 Ultimately all attempts have failed because of a `libgcc` dependent unwinding implementation in PROS
 and strange, likely linker related, memory access violation issues in FreeRTOS task switching code.
 It could still technically be done if we manually patched `libpros`'
-unwinding implementation to be indapendent of `libgcc`
+unwinding implementation to be independent of `libgcc`
 and figured out what what caused the memory access violations,
 however this would be difficult and would require a huge amount of testing.
 

@@ -3,12 +3,12 @@
 When a Rust program encounters an unrecoverable error, it `panic!()`s. The behavior of a panic is intentionally not defined in Rust, and may vary based on the platform and strategy.
 
 In general, Rust defines two "panic strategies":
-- `abort`: After printing a stacktrace (defined by a `#[panic_hander]`), the program will exit immediately. No memory cleanup is performed. This form of panic is *truly* unrecoverable.
+- `abort`: After printing a stacktrace (defined by a `#[panic_handler]`), the program will exit immediately. No memory cleanup is performed. This form of panic is *truly* unrecoverable.
 - `unwind`: Rather than exiting immediately, the program's stack memory will be *unwound*, allowing for a more graceful exit. Every active struct instance's `Drop` implementation will be called, and panics created outside of the main thread can be [caught and handled](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html).
 
 ## `no_std` and Panics: The current approach.
 
-Panic behavior is platform-dependent. On a more "traditional" platform target, we have the luxury of an operating system with I/O utilities and a well-defined allocator. On an embedded target such as `armv7a-vexos-eabi` (the platform target defined by `pros-rs`), Rust takes no assumptions and leaves the panic implementation up to us.
+Panic behavior is platform-dependent. On a more "traditional" platform target, we have the luxury of an operating system with I/O utilities and a well-defined allocator. On an embedded target such as `armv7a-VEXos-eabi` (the platform target defined by `pros-rs`), Rust takes no assumptions and leaves the panic implementation up to us.
 
 In order to build a barebones Rust program on bare metal, we must define a panic handler:
 ```rs
@@ -25,7 +25,7 @@ In this (extremely barebones) example, if `panic!()` were to be called, the pani
 - It optionally displays a brief error message on the brain screen.
 - Finally, it exits the user program using PROS' wrapper over over the `vexSystemExitRequest()` SDK call.
 
-The panic implementation does not perform stack unwinding or any cleanup, as `armv7a-vexos-eabi`'s panic_strategy is currently `abort`.
+The panic implementation does not perform stack unwinding or any cleanup, as `armv7a-VEXos-eabi`'s panic_strategy is currently `abort`.
 
 ## Unwinding on ARM
 
