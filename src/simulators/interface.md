@@ -10,26 +10,151 @@ The code executor sends events that happen inside the simulator that the fronten
 
 The frontend sends messages to the code executor to control the robot code environment, simulating changes in robot hardware (like controller input and LCD touch events) or competition phase.
 
-## Example
+## Events
 
-```json
-// sim <-> frontend
-// Code executor tells frontend it is booting
-/* -> */ "Loading"
-// Code executor tells frontend it has finished booting
-// and is ready to know about the connected peripherals
-/* -> */ "ResourcesRequired"
-// Frontend tells code executor there is only a motor connected to port 1.
-/* <- */ {"PortsUpdate":{"1":"Motor"}}
-// Frontend tells code executor to start running the robot code
-/* <- */ "Start"
-// Code executor says it is running the robot code
-/* -> */ "SchedulerStarted"
-// Code executor tells frontend that the robot code wants to run Motor 1 at 1V.
-/* -> */ {"MotorUpdated":{"port":1, "volts":1, "encoder_units": ..., ... }}
-// Code executor tells frontend that the robot code has exited without error.
-/* -> */ "AllTasksFinished"
-```
+Events are sent from the simulator backend to the frontend to describe simulator state changes.
+
+- `ScreenDraw`: Draw something on the screen. `ScreenDraw` fields:
+  - command: [DrawCommand](#drawcommand)
+  - color: integer
+- ScreenClear: Fill the entire screen with one color. `ScreenClear` fields:
+  - color: integer
+- `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` feilds:
+  - enable: boolean
+- `ScreenRender`: Flush the screens double buffer if screen double buffering is enabled.
+- `VCodeSig`: Sends info about the program header. Implementation details surrounding how this should be stored are TBD.
+- `Ready`: The backend is ready to start executing user code.
+- `Exited`: The backend has stopped exiting user code and will be terminating.
+- `Serial`: Data that has been flushed from the serial FIFO buffer. `Serial` fields:
+  - channel: integer
+  - data: byte array
+- `DeviceUpdate`: State regarding an ADI or Smart device has changed. `DeviceUpdate` fields:
+  - status: [DeviceStatus](#devicestatus)
+  - port: [Port](#port)
+- Battery (implementation details not completely decided)
+- `RobotPose`: The physically simulated robot has moved. `RobotPose` fields:
+  - x: float
+  - y: float
+- `RobotState`: The state of the physically simulated robot has cahnged. Implementation is TBD.
+- `Log`: Log a message. This is not to be used in place of serial. This is purely for messages from the backend itself. `Log` fields:
+  - level: [LogLevel](#logLevel)
+  - message: UTF8 encoded string.
+- `VEXNetConnect`: Tell the, currently nonexistant, VEXNet server to open a VEXNet connection. `VEXNetConnect` fields:
+  - port: [SmartPort](#smartport).
+  - id: string (unhashed id)
+  - mode: [LinkMode](#linkmode)
+  - override: boolean
+- `VEXNetDisconnect`: Tell the VEXNet server that the vexlink connection has been terminated. Fields:
+  - port: [SmartPort](#smartport).
+  
+## Commands
+
+Commands are sent from the frotend to the backend and signal for specific actions to be performed.
+
+- `Touch`: Touch a point on the screen. Only one touch can be registered on the Brain display. `Touch` fields:
+  - pos: [Point](#point)
+  - event: [TouchEvent](#touchevent)
+- `ControllerUpdate`: TBD
+- `USD`: TBD
+- `VEXNetOpened`: The VEXNet server has successfully opened a connection. Fields:
+  - port: [SmartPort](#smartport).
+  - mode: [LinkMode](#linkmode)
+- `VEXNetClosed`: The VEXNet server has closed a VEXLink connection. Fields:
+  - port: [SmartPort](#smartport).
+- `CompetitionMode`: Update the competition mode. Fields:
+  - connected: boolean
+  - mode: [CompMode](#compmode)
+  - is_competition: boolean
+- `ConfigureDevice`: Configure a port as a specified device. Fields:
+  - port: [Port](#port)
+  - device: TBD
+- `AdiInput`: Set the input voltage for an ADI port. Implementation is TBD. Fields:
+  - port: [AdiPort](#adiport)
+  - voltage: float
+- `StartExecution`: Start executing user code. This should be treated as a no-op by the backend until it sends a `Ready` [`Event`](#events).
+
+## Data types
+
+Several different enums and structs are used for communication to and from the backend.
+
+All enum datatypes are encoded using externally tagged representation; see [Serde enum-representations](https://serde.rs/enum-representations.html).
+Colors are encoded in 0rgb8 format. 
+
+### DrawCommand
+
+An enum with these variants:
+
+* `Fill`: Fill a shape on the screen.  Fields:
+  * shape: [Shape](#shape)
+* `Stroke`: Draw the outline of a shape on the screen. Fields:
+  * shape: [Shape](#shape)
+* `CopyBuffer`: Draw a pixel buffer to the screen with a given stride and start and ending coordinates. `CopyBuffer` fields:
+  * top_left: [Point](#point)
+  * bottom_right: [Point](#point)
+  * stride: nonzero integer
+  * buffer: 32 bit integer array of colors.
+
+### Shape
+
+An enum that describes a shape to be drawn on the screen.
+Shape has these variants:
+
+* `Rectangle`: Rectangles are drawn starting at the top left coordinate and extending to the bottom right coordinate. `Rectangle` fields:
+  * top_left: [Point](#point)
+  * bottom_right: [Point](#point)
+* `Circle`: `Circle`s are drawn with a coordinate at the center of the circle and a radius. This variant has these fields:
+  * center: [Point](#point)
+  * radius: integer
+* `Pixel`: Draw a single pixel at a coordinate. `Pixel` fields:
+  * pos: [Point](#point)
+
+### Point
+
+A struct that stores a pixel coordinate.
+The origin is at the top left of the screen.
+A point stores two integers;
+one for the x coordinate and one for the y coordinate.
+
+### DeviceStatus
+
+TBD
+
+### LinkMode
+
+An enum representing the type of VEXLink connection.
+`LinkMode` variants:
+- `Manager`
+- `Worker`
+
+## TouchEvent
+
+An enum representing how a touch on the Brain display has changed.
+`TouchEvent` variants:
+- `Released`: The screen is no longer being pressed.
+- `Pressed`: A new touch has been registered on the screen or the screen has been held but not long enough to start sending `Held` events.
+- `Held`: Sent in place of `Pressed` events once a timeout has been reached. I cannot find the exact timeout for this, but it can easily be tested with a simple program.
+
+### Port
+
+An enum containing a Smart port or ADI port.
+`Port` variants:
+- `Smart`: [SmartPort](#smartport)
+- `Adi`: [AdiPort](#adiport)
+
+### SmartPort
+
+An integer with the constraints 0 ≤ integer ≤ 20.
+
+### AdiPort
+
+An integer with the constraints 0 ≤ integer ≤ 7.
+
+### CompMode
+
+An enum representing the current phase of competition.
+Variants:
+- `Auto`
+- `Driver`
 
 ## Notes
 
