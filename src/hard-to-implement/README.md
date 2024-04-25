@@ -1,6 +1,6 @@
 # Hard To Implement Features
 
-There are many features that we would love to have in pros-rs, but don't have implemented.
+There are many features that we would love to have in vexide, but don't have implemented.
 Often these features are not implemented because they are very technical
 or too hard to implement.
 This chapter goes over these features and describes what we know about them,

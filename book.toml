@@ -3,10 +3,10 @@ authors = ["Gavin-Niederman"]
 language = "en"
 multilingual = false
 src = "src"
-title = "pros-rs internal docs"
+title = "vexide internal docs"
 
 [output.html]
-git-repository-url = "https://github.com/pros-rs/internal-documentation"
+git-repository-url = "https://github.com/vexide/internal-documentation"
 fold = { enable = true, level = 2 }
 site-url = "internals.pros.rs"
 mathjax-support = true

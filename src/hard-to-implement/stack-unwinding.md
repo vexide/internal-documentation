@@ -8,7 +8,7 @@ In general, Rust defines two "panic strategies":
 
 ## `no_std` and Panics: The current approach.
 
-Panic behavior is platform-dependent. On a more "traditional" platform target, we have the luxury of an operating system with I/O utilities and a well-defined allocator. On an embedded target such as `armv7a-VEXos-eabi` (the platform target defined by `pros-rs`), Rust takes no assumptions and leaves the panic implementation up to us.
+Panic behavior is platform-dependent. On a more "traditional" platform target, we have the luxury of an operating system with I/O utilities and a well-defined allocator. On an embedded target such as `armv7a-VEXos-eabi` (the platform target defined by `vexide`), Rust takes no assumptions and leaves the panic implementation up to us.
 
 In order to build a barebones Rust program on bare metal, we must define a panic handler:
 ```rs
@@ -20,7 +20,7 @@ fn panic(info: &PanicInfo) -> ! {
 
 In this (extremely barebones) example, if `panic!()` were to be called, the panic handler would simply spinlock the CPU indefinitely. If this were an enviornment where `libc` was available (PROS has access to newlib libc) we could call `libc::exit(1)`.
 
-`pros-rs` currently defines a basic panic handler under the assumption of the `abort` strategy:
+vexide currently defines a basic panic handler under the assumption of the `abort` strategy:
 - It prints a panic message over stdout through serial.
 - It optionally displays a brief error message on the brain screen.
 - Finally, it exits the user program using PROS' wrapper over over the `vexSystemExitRequest()` SDK call.
@@ -33,7 +33,7 @@ As it turns out, it might be possible to support `"panic_strategy": "unwind"` on
 
 Essentially, in order to implement an unwinding panic, we must first override the `eh_personality` language item which is called by Rust internally when panicking using `unwind`. The `#[eh_personality]` routine is then responsible for hooking into libgcc's ARM unwinding functions for actually unwinding the stack. These functions are actually part of the [Itanium C++ Exception Handling ABI](https://itanium-cxx-abi.github.io/cxx-abi/abi-eh.html).
 
-In a [previous attempt](https://github.com/pros-rs/pros-rs/compare/main...Tropix126:pros-rs:feat/panic-unwind) to reimplement unwinding panics, that item looked something like this:
+In a [previous attempt](https://github.com/vexide/pros-rs/compare/main...Tropix126:pros-rs:feat/panic-unwind) to reimplement unwinding panics, that item looked something like this:
 ```rs
 #![feature(lang_items)]
 
