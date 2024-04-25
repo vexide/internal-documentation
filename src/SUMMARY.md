@@ -5,6 +5,7 @@
 - [vexide](./vexide/README.md)
   - [Technical Implementations](./vexide/technical/REAMDE.md)
     - [Startup](./vexide/technical/startup.md)
+    - [Critical Section](./vexide/technical/critical-section.md)
 - [pros-rs](./pros-rs/README.md)
    - [Technical Implementations](./pros-rs/technical/REAMDE.md)
      - [Task Local Storage](./pros-rs/technical/tls.md)
