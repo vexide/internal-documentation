@@ -1,14 +1,15 @@
-# Vexide Simulator Interface
+# Vexide Simulator Protocol
 
-Vexide Simulator Interface is a protocol that allows simulator code executors and frontends to communicate. Software that implements it can work interchangeably, similarly to the Language Server Protocol.
+Vexide Simulator Protocol allows simulator code executors and frontends to communicate. Software that implements it can work interchangeably.
 
 ## Communication
 
 The code executor and frontend talk over a stream in [newline-delimited JSON format](https://jsonlines.org/).
 
-The code executor sends events that happen inside the simulator that the frontend might want to know about. Use this to monitor robot code progress, simulated LCD updates, log messages, and more.
+The backend sends [``Event``](#events)s which represent a change in simulator state.
+These are used by the frontend to correctly display the state of the simulated program.
 
-The frontend sends messages to the code executor to control the robot code environment, simulating changes in robot hardware (like controller input and LCD touch events) or competition phase.
+The frontend sends [``Commands``](#commands) to the code executor to control the robot code environment, simulating changes in robot hardware (like controller input and LCD touch events) or competition phase.
 
 ## Events
 
@@ -16,9 +17,9 @@ Events are sent from the simulator backend to the frontend to describe simulator
 
 - `ScreenDraw`: Draw something on the screen. `ScreenDraw` fields:
   - command: [DrawCommand](#drawcommand)
-  - color: integer
+  - color: [``Color``](#color)
 - ScreenClear: Fill the entire screen with one color. `ScreenClear` fields:
-  - color: integer
+  - color: [``Color``](#color)
 - `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` fields:
   - enable: boolean
 - `ScreenRender`: Flush the screens double buffer if screen double buffering is enabled.
@@ -78,7 +79,6 @@ Commands are sent from the frontend to the backend and signal for specific actio
 Several different enums and structs are used for communication to and from the backend.
 
 All enum datatypes are encoded using externally tagged representation; see [Serde enum-representations](https://serde.rs/enum-representations.html).
-Colors are encoded in 0rgb8 format. 
 
 ### DrawCommand
 
@@ -92,7 +92,7 @@ An enum with these variants:
   * top_left: [Point](#point)
   * bottom_right: [Point](#point)
   * stride: nonzero integer
-  * buffer: 32 bit integer array of colors.
+  * buffer: [``Color``](#color) array.
 
 ### Shape
 
@@ -112,10 +112,47 @@ Shape has these variants:
 
 A struct that stores a pixel coordinate.
 The origin is at the top left of the screen.
-A point stores two integers;
-one for the x coordinate and one for the y coordinate.
+``Point`` fields:
+- x: integer
+- y: integer
 
 ### DeviceStatus
+
+WIP
+
+An enum representing the state of a device.
+Every time the state of a device on any port changes, this enum will be sent.
+``DeviceStatus`` variants:
+- ``Motor``: The state of the motor has changed. 
+  ``Motor`` fields:
+  - velocity: float in radians per second.
+  - reversed: boolean
+  - power_draw: float in Watts
+  - torque_output: float in Nm
+  - flags: [``MotorFlags``](#motorflags)
+  - position: float in radians
+  - target_position: float in radians
+  - voltage: float in Volts.
+  - gearset: [``MotorGearSet``](#motorgearset)
+  - brake_mode: [``MotorBrakeMode``](#motorbrakemode)
+  
+### MotorGearSet
+
+Represents the gearset of a smart motor device.
+Variants:
+- ``Red``: 36-1 ratio
+- ``Green``: 18-1 ratio
+- ``Blue``: 6-1 ratio
+
+### MotorBrakeMode
+
+Represents the brake mode of a smart motor device.
+Variants:
+- ``Coast``
+- ``Brake``
+- ``Hold``
+
+### MotorFlags
 
 TBD
 
@@ -156,8 +193,16 @@ Variants:
 - `Auto`
 - `Driver`
 
+### Color
+
+A struct that represents an rgb8 color.
+`Color` fields:
+- r: 8 bit integer
+- g: 8 bit integer
+- b: 8 bit integer
+
 ## Notes
 
-- API documentation available at <https://docs.rs/pros-simulator-interface>.
+- Rust implementation available at <https://docs.rs/pros-simulator-interface>.
 - `pros-simulator-server` only uses Stdio to communicate, but other streams are possible.
 - Data over Stderr should be considered unstructured logs and may be shown to the user. As such, if the code executor crashes, its error message will be visible.
