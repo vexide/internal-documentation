@@ -47,7 +47,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
   - override: boolean
 - `VEXLinkDisconnect`: Tell the VEXLink server that the VEXLink connection has been terminated. Fields:
   - port: [SmartPort](#smartport).
-  
+
 ## Commands
 
 Commands are sent from the frontend to the backend and signal for specific actions to be performed.
@@ -123,7 +123,7 @@ WIP
 An enum representing the state of a device.
 Every time the state of a device on any port changes, this enum will be sent.
 ``DeviceStatus`` variants:
-- ``Motor``: The state of the motor has changed. 
+- ``Motor``: The state of the motor has changed.
   ``Motor`` fields:
   - velocity: float in radians per second.
   - reversed: boolean
@@ -135,7 +135,7 @@ Every time the state of a device on any port changes, this enum will be sent.
   - voltage: float in Volts.
   - gearset: [``MotorGearSet``](#motorgearset)
   - brake_mode: [``MotorBrakeMode``](#motorbrakemode)
-  
+
 ### MotorGearSet
 
 Represents the gearset of a smart motor device.
@@ -200,6 +200,15 @@ A struct that represents an rgb8 color.
 - r: 8 bit integer
 - g: 8 bit integer
 - b: 8 bit integer
+
+### LogLevel
+
+An enum representing the importance of a log message.
+Variants:
+- `Trace`: jumptable calls and other verbose messages
+- `Info`: non-critical informational messages
+- `Warn`: possible issues or errors that do not directly affect the simulation
+- `Error`: issues and errors that degrade the simulation
 
 ## Notes
 
