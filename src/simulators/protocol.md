@@ -73,6 +73,8 @@ Commands are sent from the frontend to the backend and signal for specific actio
   - port: [AdiPort](#adiport)
   - voltage: float
 - `StartExecution`: Start executing user code. This should be treated as a no-op by the backend until it sends a `Ready` [`Event`](#events).
+- `SetBatteryCapacity`: Updates the remaining battery capacity to a new Watt-Hours value. If this command is not sent, the simulator must default to a value of 14 Watt-Hours, the maximum capacity of the VEX V5 battery. This value may be used by the simulator to help calculate the voltage of the battery. Fields:
+  - capacity: float in Watt-Hours
 
 ## Data types
 
@@ -209,6 +211,15 @@ Variants:
 - `Info`: non-critical informational messages
 - `Warn`: possible issues or errors that do not directly affect the simulation
 - `Error`: issues and errors that degrade the simulation
+
+### Battery
+
+A struct containing information about the current state of the battery
+Fields:
+
+- `voltage`: The output voltage of the battery. Float value in Volts.
+- `current`: The current draw of the battery. Float value in Amps.
+- `capacity`: The remaining energy capacity of the battery. Float value in Watt-Hours.
 
 ## Notes
 
