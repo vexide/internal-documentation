@@ -56,7 +56,8 @@ Commands are sent from the frontend to the backend and signal for specific actio
   - pos: [Point](#point)
   - event: [TouchEvent](#touchevent)
 - `ControllerUpdate`: TBD
-- `USD`: TBD
+- `USD`: Mount or unmount a directory as the V5's SD Card. Robot programs will be able to read and write to this directory. Fields:
+  - root: string (path to sd card's root), or null to unmount
 - `VEXLinkOpened`: The VEXLink server has successfully opened a connection. Fields:
   - port: [SmartPort](#smartport).
   - mode: [LinkMode](#linkmode)
