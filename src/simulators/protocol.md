@@ -23,7 +23,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` fields:
   - enable: boolean
 - `ScreenRender`: Flush the screens double buffer if screen double buffering is enabled.
-- `VCodeSig`: Sends info about the program header. Implementation details surrounding how this should be stored are TBD.
+- `VCodeSig`: The cold header ("Code Signature") of the robot program, encoded as a base-64 string.
 - `Ready`: The backend is ready to start executing user code.
 - `Exited`: The backend has stopped exiting user code and will be terminating.
 - `Serial`: Data that has been flushed from the serial FIFO buffer. `Serial` fields:
