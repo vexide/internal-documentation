@@ -32,13 +32,16 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `DeviceUpdate`: State regarding an ADI or Smart device has changed. `DeviceUpdate` fields:
   - status: [DeviceStatus](#devicestatus)
   - port: [Port](#port)
-- Battery (implementation details not completely decided)
+- `Battery`: New statistics about the current state of the robot battery are ready. Fields:
+  - voltage: The output voltage of the battery. Float value in Volts.
+  - current: The current draw of the battery. Float value in Amps.
+  - capacity: The remaining energy capacity of the battery. Float value in Watt-Hours.
 - `RobotPose`: The physically simulated robot has moved. `RobotPose` fields:
   - x: float
   - y: float
 - `RobotState`: The state of the physically simulated robot has changed. Implementation is TBD.
 - `Log`: Log a message. This is not to be used in place of serial. This is purely for messages from the backend itself. `Log` fields:
-  - level: [LogLevel](#logLevel)
+  - level: [LogLevel](#loglevel)
   - message: UTF8 encoded string.
 - `VEXLinkConnect`: Tell the, currently nonexistent, VEXLink server to open a VEXLink connection. `VEXLinkConnect` fields:
   - port: [SmartPort](#smartport).
@@ -55,7 +58,7 @@ Commands are sent from the frontend to the backend and signal for specific actio
 - `Touch`: Touch a point on the screen. Only one touch can be registered on the Brain display. `Touch` fields:
   - pos: [Point](#point)
   - event: [TouchEvent](#touchevent)
-- `ControllerUpdate`: TBD
+- `ControllerUpdate`: Updates the current state of the controller. A [ControllerUpdate](#controllerupdate) enum.
 - `USD`: Mount or unmount a directory as the V5's SD Card. Robot programs will be able to read and write to this directory. Fields:
   - root: string (path to sd card's root), or null to unmount
 - `VEXLinkOpened`: The VEXLink server has successfully opened a connection. Fields:
@@ -69,7 +72,7 @@ Commands are sent from the frontend to the backend and signal for specific actio
   - is_competition: boolean
 - `ConfigureDevice`: Configure a port as a specified device. Fields:
   - port: [Port](#port)
-  - device: TBD
+  - device: [Device](#device)
 - `AdiInput`: Set the input voltage for an ADI port. Implementation is TBD. Fields:
   - port: [AdiPort](#adiport)
   - voltage: float
@@ -87,35 +90,36 @@ All enum datatypes are encoded using externally tagged representation; see [Serd
 
 An enum with these variants:
 
-* `Fill`: Fill a shape on the screen.  Fields:
-  * shape: [Shape](#shape)
-* `Stroke`: Draw the outline of a shape on the screen. Fields:
-  * shape: [Shape](#shape)
-* `CopyBuffer`: Draw a pixel buffer to the screen with a given stride and start and ending coordinates. `CopyBuffer` fields:
-  * top_left: [Point](#point)
-  * bottom_right: [Point](#point)
-  * stride: nonzero integer
-  * buffer: [``Color``](#color) array.
+- `Fill`: Fill a shape on the screen.  Fields:
+  - shape: [Shape](#shape)
+- `Stroke`: Draw the outline of a shape on the screen. Fields:
+  - shape: [Shape](#shape)
+- `CopyBuffer`: Draw a pixel buffer to the screen with a given stride and start and ending coordinates. `CopyBuffer` fields:
+  - top_left: [Point](#point)
+  - bottom_right: [Point](#point)
+  - stride: nonzero integer
+  - buffer: [``Color``](#color) array.
 
 ### Shape
 
 An enum that describes a shape to be drawn on the screen.
 Shape has these variants:
 
-* `Rectangle`: Rectangles are drawn starting at the top left coordinate and extending to the bottom right coordinate. `Rectangle` fields:
-  * top_left: [Point](#point)
-  * bottom_right: [Point](#point)
-* `Circle`: `Circle`s are drawn with a coordinate at the center of the circle and a radius. This variant has these fields:
-  * center: [Point](#point)
-  * radius: integer
-* `Pixel`: Draw a single pixel at a coordinate. `Pixel` fields:
-  * pos: [Point](#point)
+- `Rectangle`: Rectangles are drawn starting at the top left coordinate and extending to the bottom right coordinate. `Rectangle` fields:
+  - top_left: [Point](#point)
+  - bottom_right: [Point](#point)
+- `Circle`: `Circle`s are drawn with a coordinate at the center of the circle and a radius. This variant has these fields:
+  - center: [Point](#point)
+  - radius: integer
+- `Pixel`: Draw a single pixel at a coordinate. `Pixel` fields:
+  - pos: [Point](#point)
 
 ### Point
 
 A struct that stores a pixel coordinate.
 The origin is at the top left of the screen.
 ``Point`` fields:
+
 - x: integer
 - y: integer
 
@@ -126,6 +130,7 @@ WIP
 An enum representing the state of a device.
 Every time the state of a device on any port changes, this enum will be sent.
 ``DeviceStatus`` variants:
+
 - ``Motor``: The state of the motor has changed.
   ``Motor`` fields:
   - velocity: float in radians per second.
@@ -143,6 +148,7 @@ Every time the state of a device on any port changes, this enum will be sent.
 
 Represents the gearset of a smart motor device.
 Variants:
+
 - ``Red``: 36-1 ratio
 - ``Green``: 18-1 ratio
 - ``Blue``: 6-1 ratio
@@ -151,6 +157,7 @@ Variants:
 
 Represents the brake mode of a smart motor device.
 Variants:
+
 - ``Coast``
 - ``Brake``
 - ``Hold``
@@ -163,13 +170,15 @@ TBD
 
 An enum representing the type of VEXLink connection.
 `LinkMode` variants:
+
 - `Manager`
 - `Worker`
 
-## TouchEvent
+### TouchEvent
 
 An enum representing how a touch on the Brain display has changed.
 `TouchEvent` variants:
+
 - `Released`: The screen is no longer being pressed.
 - `Pressed`: A new touch has been registered on the screen or the screen has been held but not long enough to start sending `Held` events.
 - `Held`: Sent in place of `Pressed` events once a timeout has been reached. I cannot find the exact timeout for this, but it can easily be tested with a simple program.
@@ -178,6 +187,7 @@ An enum representing how a touch on the Brain display has changed.
 
 An enum containing a Smart port or ADI port.
 `Port` variants:
+
 - `Smart`: [SmartPort](#smartport)
 - `Adi`: [AdiPort](#adiport)
 
@@ -193,6 +203,7 @@ An integer with the constraints 0 ≤ integer ≤ 7.
 
 An enum representing the current phase of competition.
 Variants:
+
 - `Auto`
 - `Driver`
 
@@ -200,6 +211,7 @@ Variants:
 
 A struct that represents an rgb8 color.
 `Color` fields:
+
 - r: 8 bit integer
 - g: 8 bit integer
 - b: 8 bit integer
@@ -208,19 +220,54 @@ A struct that represents an rgb8 color.
 
 An enum representing the importance of a log message.
 Variants:
+
 - `Trace`: jumptable calls and other verbose messages
 - `Info`: non-critical informational messages
 - `Warn`: possible issues or errors that do not directly affect the simulation
 - `Error`: issues and errors that degrade the simulation
 
-### Battery
+### ControllerUpdate
 
-A struct containing information about the current state of the battery
+An enum representing a method of accessing a controller's status. If the server recieves a ControllerUpdate command while in a disabled or autonomous mode, it must store the state recieved even though the robot code cannot access it yet.
+Variants:
+
+- `Raw`: [ControllerState](#controllerstate). If this variant is recieved, the server must stop updating the controller's status using a previously recieved UUID and only provide the robot code with the most recently recieved raw state.
+- `UUID`: string, the UUID of a hardware gamepad such that it can be accessed via SDL2. If this variant is recieved, the server must discard any previously recieved `Raw` data and continue updating its internal representation of the controller using the specified UUID even if no more `ControllerUpdate` commands are sent.
+
+### ControllerState
+
+The current state of a controller's inputs.
 Fields:
 
-- `voltage`: The output voltage of the battery. Float value in Volts.
-- `current`: The current draw of the battery. Float value in Amps.
-- `capacity`: The remaining energy capacity of the battery. Float value in Watt-Hours.
+- `axis1`: integer with range of `[-127, 127]`
+- `axis2`: integer with range of `[-127, 127]`
+- `axis3`: integer with range of `[-127, 127]`
+- `axis4`: integer with range of `[-127, 127]`
+- `button_l1`: boolean
+- `button_l2`: boolean
+- `button_r1`: boolean
+- `button_r2`: boolean
+- `button_up`: boolean
+- `button_down`: boolean
+- `button_left`: boolean
+- `button_right`: boolean
+- `button_x`: boolean
+- `button_b`: boolean
+- `button_y`: boolean
+- `button_a`: boolean
+- `button_sel`: boolean
+- `battery_level`: integer with range of `[0, battery_capacity]`
+- `button_all`: boolean
+- `flags`: integer
+- `battery_capacity`: positive integer
+
+### Device
+
+An enum of the configurations for a peripheral device. Variants:
+
+- `Motor`: The configuration for a motor peripheral. Fields:
+  - `physical_gearset`: [``MotorGearSet``](#motorgearset)
+  - `moment_of_inertia`: float in kilogram meters squared. Controls the acceleration of the motor when it applies a set amount of torque.
 
 ## Notes
 
