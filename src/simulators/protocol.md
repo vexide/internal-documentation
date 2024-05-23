@@ -18,7 +18,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `ScreenDraw`: Draw something on the screen. `ScreenDraw` fields:
   - command: [DrawCommand](#drawcommand)
   - color: [``Color``](#color)
-- ScreenClear: Fill the entire screen with one color. `ScreenClear` fields:
+- `ScreenClear`: Fill the entire screen with one color. `ScreenClear` fields:
   - color: [``Color``](#color)
 - `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` fields:
   - enable: boolean
@@ -98,7 +98,7 @@ An enum with these variants:
   - top_left: [Point](#point)
   - bottom_right: [Point](#point)
   - stride: nonzero integer
-  - buffer: [``Color``](#color) array.
+  - buffer: image buffer of 32-bit RGB pixels as a base64-encoded string
 
 ### Shape
 
