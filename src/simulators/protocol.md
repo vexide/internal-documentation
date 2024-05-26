@@ -11,6 +11,8 @@ These are used by the frontend to correctly display the state of the simulated p
 
 The frontend sends [``Commands``](#commands) to the code executor to control the robot code environment, simulating changes in robot hardware (like controller input and LCD touch events) or competition phase.
 
+When using Standard I/O to communicate, data sent by the simulator engine over `stderr` must be considered unstructured logs and should be accessible to the user.
+
 ## Events
 
 Events are sent from the simulator backend to the frontend to describe simulator state changes.
@@ -269,9 +271,3 @@ Variants:
 - `Motor`: The configuration for a motor peripheral. Fields:
   - `physical_gearset`: [``MotorGearSet``](#motorgearset)
   - `moment_of_inertia`: float in kilogram meters squared. Controls the acceleration of the motor when it applies a set amount of torque.
-
-## Notes
-
-- Rust implementation available at <https://docs.rs/pros-simulator-interface>.
-- `pros-simulator-server` only uses Stdio to communicate, but other streams are possible.
-- Data over Stderr should be considered unstructured logs and may be shown to the user. As such, if the code executor crashes, its error message will be visible.
