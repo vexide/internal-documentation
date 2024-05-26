@@ -127,6 +127,7 @@ The origin is at the top left of the screen.
 
 An enum representing the state of a device.
 Every time the state of a device on any port changes, this enum will be sent.
+This type should be considered "non-exhaustive" and variants may be added without causing a breaking change.
 ``DeviceStatus`` variants:
 
 - ``Motor``: The state of the motor has changed.
@@ -261,7 +262,9 @@ Fields:
 
 ### Device
 
-An enum of the configurations for a peripheral device. Variants:
+An enum of the configurations for a peripheral device.
+This type should be considered "non-exhaustive" and variants may be added without causing a breaking change.
+Variants:
 
 - `Motor`: The configuration for a motor peripheral. Fields:
   - `physical_gearset`: [``MotorGearSet``](#motorgearset)
