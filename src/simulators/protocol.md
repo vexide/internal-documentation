@@ -125,8 +125,6 @@ The origin is at the top left of the screen.
 
 ### DeviceStatus
 
-WIP
-
 An enum representing the state of a device.
 Every time the state of a device on any port changes, this enum will be sent.
 ``DeviceStatus`` variants:
@@ -137,7 +135,7 @@ Every time the state of a device on any port changes, this enum will be sent.
   - reversed: boolean
   - power_draw: float in Watts
   - torque_output: float in Nm
-  - flags: [``MotorFlags``](#motorflags)
+  - flags: A 32-bit integer bitfield containing the motor flags that will be provided to the robot code. VEX V5 uses this to signal motor faults. Implementors should set this to `0`.
   - position: float in radians
   - target_position: float in radians
   - voltage: float in Volts.
@@ -258,7 +256,7 @@ Fields:
 - `button_sel`: boolean
 - `battery_level`: integer with range of `[0, battery_capacity]`
 - `button_all`: boolean
-- `flags`: integer
+- `flags`: A 32-bit integer bitfield containing the controller flags that will be provided to the robot code. Implementors should set this to `0`.
 - `battery_capacity`: positive integer
 
 ### Device
