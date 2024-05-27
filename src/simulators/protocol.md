@@ -187,6 +187,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `ScreenDraw`: Draw something on the screen. `ScreenDraw` fields:
   - command: [DrawCommand](#drawcommand)
   - color: [``Color``](#color)
+  - background: [`Color`](#color)
 - `ScreenClear`: Fill the entire screen with one color. `ScreenClear` fields:
   - color: [``Color``](#color)
 - `ScreenDoubleBufferMode`: Set the double-buffer mode of the screen. When double buffer mode is enabled draw calls should be stored in a intermediate buffer and flushed to the screen only once a `ScreenRender` event is sent. `ScreenDoubleBufferMode` fields:
