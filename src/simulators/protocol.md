@@ -1,6 +1,6 @@
 # Vexide Simulator Protocol
 
-Vexide Simulator Protocol allows simulator code executors and frontends to communicate. Software that implements it can work interchangeably.
+The Vexide Simulator Protocol enables communication between VEX robot simulators and user-facing frontends using a JSON-based protocol.
 
 ## Specification
 
