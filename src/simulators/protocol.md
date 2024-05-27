@@ -34,7 +34,7 @@ The specific commands and events that implementors may use are currently defined
 
 A session begins with the Frontend sending a `Handshake` command containing the maximum Protocol version it is compatible with (the current version is `1`), as well as an array of string IDs containing an unspecified list of extensions (i.e. deviations from the specification) that it is compatible with. If the Simulator is not compatible with the protocol version sent by the Frontend, it SHOULD immediately close the stream, ending the session. To continue the session, it MUST send a `Handshake` event containing the protocol version and extensions that will be used henceforth. The protocol version MUST be less than or equal to the one sent by the Frontend, and the extensions array MUST only contain values that the Frontend indicated it was compatible with. Unknown fields in the handshake SHALL be ignored by all implementations.
 
-The handshake is finished when both the Frontend and Backend have sent `Handshake` messages. Events and commands other than `Handshake` MAY NOT be sent until the handshake has finished.
+The handshake is finished when both the Frontend and Backend have sent `Handshake` messages. Events and commands other than `Handshake` MUST NOT be sent until the handshake has finished.
 
 After the handshake has finished, the Frontend MUST send `ConfigureDevice` commands for each peripheral that is already configured to make them available to the robot code. The Frontend SHOULD also send a `CompetitionMode` command containing the desired starting competition mode, as well as any other commands necessary to set the Simulator to the desired starting state.
 
