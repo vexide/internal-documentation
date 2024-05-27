@@ -2,6 +2,170 @@
 
 Vexide Simulator Protocol allows simulator code executors and frontends to communicate. Software that implements it can work interchangeably.
 
+## Specification
+
+This specification details the Vexide Simulator Protocol, used by tools in the vexide ecosystem to achieve interoperability between simulators and their frontend. It is primarily intended to inform developers of libraries creating software compatible with tools utilizing the protocol.
+
+### Requirements
+
+The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this section are to be interpreted as defined in [RFC 2119](https://tools.ietf.org/html/rfc2119.html).
+
+### Overall Operation
+
+Vexide Simulator Protocol (the "Protocol") is a newline-delimited JSON-based protocol intended to facilitate communication between robot simulators and frontends like GUIs. All communication MUST be in the [JSON Lines](https://jsonlines.org/) format.
+
+Implementors of the Protocol SHALL recognize two unique roles in a given session: the Code Execution Backend (the "Simulator" or "Backend") and the Frontend. A Vexide Simulator Protocol session begins with the creation of an I/O stream between the Simulator and the Frontend. Implementors SHOULD support sessions over the [standard streams](https://en.wikipedia.org/wiki/Standard_streams) of the Simulator using its standard input and standard output, but MAY support other methods such as Unix domain sockets or Transmission Control Protocol (TCP) streams.
+
+Throughout the duration of a given session, the Code Execution Backend and the Frontend send JSON messages over the underlying stream. Messages sent by the Backend are referred to as Events because they are used to notify the Frontend of changes in the simulator world. Messages sent by the Frontend are referred to as Commands because they are used to control the behavior of the Simulator.
+
+#### Standard Stream Considerations
+
+When using standard streams to communicate, data sent by the Backend over its standard error stream MUST be considered unstructured logs by the Frontend and SHOULD be made accessible to users. This requirement is to the aid discoverability of Simulator error messages and improve the troubleshooting experience.
+
+### Data Type Format
+
+Events and commands sent using the Protocol contain various JSON data types analogous to [Rust type values](https://doc.rust-lang.org/reference/types.html). Implementors of the Protocol MUST decode and encode data types to a format compatible with the [Serde](https://serde.rs/json.html) library configured to use [externally tagged enums](https://serde.rs/enum-representations.html).
+
+### Specific Commands and Events
+
+The specific commands and events that implementors may use are currently defined in the [Commands](#commands) and [Events](#events) sections, respectively.
+
+### Protocol Timeline
+
+A session begins with the Frontend sending a `Handshake` command containing the maximum Protocol version it is compatible with (the current version is `1`), as well as an array of string IDs containing an unspecified list of extensions (i.e. deviations from the specification) that it is compatible with. If the Simulator is not compatible with the protocol version sent by the frontend, it SHOULD immediately close the stream, ending the session. Otherwise, it MUST send a `Handshake` events containing the protocol version and extensions that will be used henceforth. The protocol version MUST be less than or equal to the one sent by the Frontend, and the extensions array MUST only contain values that the Frontend indicated it was compatible with. Unknown fields in the handshake SHALL be ignored by all implementations.
+
+The handshake is finished when both the Frontend and Backend have sent `Handshake` messages. Events and commands other than `Handshake` MAY NOT be sent until the handshake has finished.
+
+After the handshake has finished, the Frontend MUST send `ConfigureDevice` commands for each peripheral that is already configured in order to make them available to the robot code. The Frontend SHOULD also send a `CompetitionMode` command containing the desired starting competition mode, as well as any other commands set the Simulator to the desired starting state.
+
+If the Frontend does not send a `CompetitionMode` command, the Backend SHALL default to a competition mode with the following fields:
+
+- `enabled`: `true`
+- `connected`: `false`
+- `mode`: `Driver`
+- `is_competition`: `false`
+
+Before continuing the session, the Backend MUST handle setup commands sent by the Frontend and at any point send a `Ready` event when it is capable of immediately beginning code execution. In order to continue the simulation, the Frontend MUST wait for the Backend's `Ready` event, and then send the `StartExecution` commands. The Backend SHOULD ignore `StartExecution` commands sent received before it has signaled it is ready.
+
+After receiving the `StartExecution` command, the Backend SHALL take the steps necessary to begin executing robot code, and SHOULD send events as necessary to notify the Frontend of changes to the state of the simulation.
+
+If the robot code exits for any reason, the Simulator MUST send an `Exited` event, followed by ending the session by closing the underlying stream. If the code exited due to a fatal error, the Simulator SHOULD precede its `Exited` event with an `Error`-level `Log` event containing a concise explanation of what went wrong. If the Simulator ends the session by closing the underlying stream without first sending an `Exited` event, the Frontend SHOULD handle the situation as an internal error in the Simulator.
+
+#### Code Signatures
+
+Backends SHOULD send a `VCodeSig` event containing the robot program's Code Signature (i.e. "Cold Header") as soon as possible after the handshake has finished. Code signatures MUST be encoded in the Base64 format.
+
+Here is the output of `hexdump -C` on a code signature commonly used by vexide programs:
+
+```txt
+00000000  58 56 58 35 02 00 00 00  00 00 00 00 00 00 00 00  |XVX5............|
+00000010  00 00 00 00 00 00 00 00                           |........|
+00000018
+```
+
+This code signature would be encoded by a compatible Simulator as the following Base64-encoded JSON string literal:
+
+```json
+"WFZYNQIAAAAAAAAAAAAAAAAAAAAAAAAA"
+```
+
+#### Logging
+
+Backends MAY send human-readable `Log` events at any time after the handshake is completed. Frontends SHOULD make these logs available to users and MAY store them for later retrieval. Frontends MAY also implement filtering to reduce clutter caused by log levels that tend to be more verbose.
+
+### Example Session
+
+This example session is provided as a resource to help developers imagine one of the possibilities of a valid exchange using the Protocol. Multi-line JSON, as well as comments preceded by a double-slash (`//`), are not valid in a true implementation and are used to aid the reader in understanding.
+
+```jsonc
+// The Frontend begins the session by sending a handshake.
+// Frontend:
+{ "Handshake": { "version": 1, "extensions": [] } }
+// The Backend agrees on using version 1 without extensions.
+// Backend:
+{ "Handshake": { "version": 1, "extensions": [] } }
+//
+// The Frontend begins configuring devices.
+// Frontend:
+{ "ConfigureDevice": {
+  "port": 1,
+  "device": { "Motor": {
+    "physical_gearset": "Red",
+    "moment_of_inertia": 1.0
+  } }
+} }
+{ "ConfigureDevice": {
+  "port": 2,
+  "device": { "Motor": {
+    "physical_gearset": "Green",
+    "moment_of_inertia": 1.0
+  } }
+} }
+// Meanwhile, the Backend has finished loading the robot program's code signature.
+// Backend:
+{ "VCodeSig": "WFZYNQIAAAAAAAAAAAAAAAAAAAAAAAAA" }
+// The Frontend continues setup.
+// Frontend:
+{ "ConfigureDevice": {
+  "port": 3,
+  "device": { "Motor": {
+    "physical_gearset": "Red",
+    "moment_of_inertia": 2.0
+  } }
+} }
+{ "CompetitionMode": {
+  "enabled": true,
+  "mode": "Driver",
+  "connected": true,
+  "is_competition": false
+} }
+// The Frontend has finished configuring devices and is now waiting for the
+// Backend to be ready.
+//
+// The Backend is now ready to execute the robot code.
+// Backend:
+"Ready"
+//
+// The user has indicated the robot code should start.
+// Frontend:
+"StartExecution"
+// The robot program has sent a line over the serial port.
+// Backend:
+{ "Serial": {
+  "channel": 1,
+  "data": "SGVsbG8gV29ybGQhCg=="
+} }
+// The robot program is moving a motor.
+// Backend:
+{ "DeviceUpdate": {
+  "port": 1,
+  "status": { "Motor": {
+    "velocity": 1.0,
+    "reversed": false,
+    "power_draw": 1.0,
+    "torque_output": 1.0,
+    "flags": 0,
+    "position": 2.5,
+    "target_position": null,
+    "voltage": 5.0,
+    "gearset": "Red",
+    "brake_mode": "Brake"
+  } }
+} }
+// The user has changed the competition mode.
+// Frontend:
+{ "CompetitionMode": {
+  "enabled": false,
+  "mode": "Driver",
+  "connected": true,
+  "is_competition": false
+} }
+//
+// The robot code has exited.
+// Backend:
+"Exited"
+```
+
 ## Communication
 
 The code executor and frontend talk over a stream in [newline-delimited JSON format](https://jsonlines.org/).
@@ -17,6 +181,9 @@ When using Standard I/O to communicate, data sent by the simulator engine over `
 
 Events are sent from the simulator backend to the frontend to describe simulator state changes.
 
+- `Handshake`: Specifies the version of the Protocol used, as well as extensions that the Backend is compatible with. Fields:
+  - version: Nonzero integer. Compatible implementations MUST set this to the value `1`.
+  - extensions: String array
 - `ScreenDraw`: Draw something on the screen. `ScreenDraw` fields:
   - command: [DrawCommand](#drawcommand)
   - color: [``Color``](#color)
@@ -30,7 +197,7 @@ Events are sent from the simulator backend to the frontend to describe simulator
 - `Exited`: The backend has stopped exiting user code and will be terminating.
 - `Serial`: Data that has been flushed from the serial FIFO buffer. `Serial` fields:
   - channel: integer
-  - data: byte array
+  - data: Base64-encoded string
 - `DeviceUpdate`: State regarding an ADI or Smart device has changed. `DeviceUpdate` fields:
   - status: [DeviceStatus](#devicestatus)
   - port: [Port](#port)
@@ -57,6 +224,9 @@ Events are sent from the simulator backend to the frontend to describe simulator
 
 Commands are sent from the frontend to the backend and signal for specific actions to be performed.
 
+- `Handshake`: Specifies the version of the Protocol used, as well as extensions that the Frontend is compatible with. Fields:
+  - version: Nonzero integer. Compatible implementations MUST set this to the value `1`.
+  - extensions: String array
 - `Touch`: Touch a point on the screen. Only one touch can be registered on the Brain display. `Touch` fields:
   - pos: [Point](#point)
   - event: [TouchEvent](#touchevent)
@@ -69,6 +239,7 @@ Commands are sent from the frontend to the backend and signal for specific actio
 - `VEXLinkClosed`: The VEXLink server has closed a VEXLink connection. Fields:
   - port: [SmartPort](#smartport).
 - `CompetitionMode`: Update the competition mode. Fields:
+  - enabled: boolean
   - connected: boolean
   - mode: [CompMode](#compmode)
   - is_competition: boolean
@@ -140,7 +311,7 @@ This type should be considered "non-exhaustive" and variants may be added withou
   - torque_output: float in Nm
   - flags: A 32-bit integer bitfield containing the motor flags that will be provided to the robot code. VEX V5 uses this to signal motor faults. Implementors should set this to `0`.
   - position: float in radians
-  - target_position: float in radians
+  - target_position: optional float in radians
   - voltage: float in Volts.
   - gearset: [``MotorGearSet``](#motorgearset)
   - brake_mode: [``MotorBrakeMode``](#motorbrakemode)
