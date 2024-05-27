@@ -4,7 +4,7 @@ Vexide Simulator Protocol allows simulator code executors and frontends to commu
 
 ## Specification
 
-This specification details the Vexide Simulator Protocol, used by tools in the vexide ecosystem to achieve interoperability between simulators and their frontend. It is primarily intended to inform developers of libraries creating software compatible with tools utilizing the protocol.
+This specification details the Vexide Simulator Protocol, used by tools in the vexide ecosystem to achieve interoperability between simulators and their frontend. It is primarily intended to inform library developers creating software intended to be compatible with tools utilizing the Protocol.
 
 ### Requirements
 
@@ -12,9 +12,9 @@ The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL N
 
 ### Overall Operation
 
-Vexide Simulator Protocol (the "Protocol") is a newline-delimited JSON-based protocol intended to facilitate communication between robot simulators and frontends like GUIs. All communication MUST be in the [JSON Lines](https://jsonlines.org/) format.
+Vexide Simulator Protocol (the "Protocol") is a newline-delimited JSON-based protocol intended to facilitate communication between robot simulators and frontends like GUIs. All communication MUST be encoded in the [JSON Lines](https://jsonlines.org/) format.
 
-Implementors of the Protocol SHALL recognize two unique roles in a given session: the Code Execution Backend (the "Simulator" or "Backend") and the Frontend. A Vexide Simulator Protocol session begins with the creation of an I/O stream between the Simulator and the Frontend. Implementors SHOULD support sessions over the [standard streams](https://en.wikipedia.org/wiki/Standard_streams) of the Simulator using its standard input and standard output, but MAY support other methods such as Unix domain sockets or Transmission Control Protocol (TCP) streams.
+Implementors of the Protocol SHALL recognize two unique roles in a given session: the Code Execution Backend (the "Simulator" or "Backend") and the Frontend. A Vexide Simulator Protocol session begins with the creation of an I/O stream between the Simulator and the Frontend. Implementors SHOULD support sessions over the [standard streams](https://en.wikipedia.org/wiki/Standard_streams) of the Simulator using its standard input and standard output and MAY support other methods such as Unix domain sockets or Transmission Control Protocol (TCP) streams.
 
 Throughout a given session, the Code Execution Backend and the Frontend send JSON messages over the underlying stream. Messages sent by the Backend are referred to as Events because they are used to notify the Frontend of changes in the simulator world. Messages sent by the Frontend are referred to as Commands because they are used to control the behavior of the Simulator.
 
@@ -32,7 +32,7 @@ The specific commands and events that implementors may use are currently defined
 
 ### Protocol Timeline
 
-A session begins with the Frontend sending a `Handshake` command containing the maximum Protocol version it is compatible with (the current version is `1`), as well as an array of string IDs containing an unspecified list of extensions (i.e. deviations from the specification) that it is compatible with. If the Simulator is not compatible with the protocol version sent by the frontend, it SHOULD immediately close the stream, ending the session. Otherwise, it MUST send a `Handshake` event containing the protocol version and extensions that will be used henceforth. The protocol version MUST be less than or equal to the one sent by the Frontend, and the extensions array MUST only contain values that the Frontend indicated it was compatible with. Unknown fields in the handshake SHALL be ignored by all implementations.
+A session begins with the Frontend sending a `Handshake` command containing the maximum Protocol version it is compatible with (the current version is `1`), as well as an array of string IDs containing an unspecified list of extensions (i.e. deviations from the specification) that it is compatible with. If the Simulator is not compatible with the protocol version sent by the Frontend, it SHOULD immediately close the stream, ending the session. To continue the session, it MUST send a `Handshake` event containing the protocol version and extensions that will be used henceforth. The protocol version MUST be less than or equal to the one sent by the Frontend, and the extensions array MUST only contain values that the Frontend indicated it was compatible with. Unknown fields in the handshake SHALL be ignored by all implementations.
 
 The handshake is finished when both the Frontend and Backend have sent `Handshake` messages. Events and commands other than `Handshake` MAY NOT be sent until the handshake has finished.
 
@@ -49,7 +49,7 @@ Before continuing the session, the Backend MUST handle setup commands sent by th
 
 After receiving the `StartExecution` command, the Backend SHALL take the steps necessary to begin executing robot code and SHOULD send events as necessary to notify the Frontend of changes to the state of the simulation.
 
-If the robot code exits for any reason, the Simulator MUST send an `Exited` event, followed by ending the session by closing the underlying stream. If the code exited due to a fatal error, the Simulator SHOULD precede its `Exited` event with an `Error`-level `Log` event containing a concise explanation of what went wrong. If the Simulator ends the session by closing the underlying stream without first sending an `Exited` event, the Frontend SHOULD handle the situation as an internal error in the Simulator.
+If the robot code exits for any reason, the Simulator MUST send an `Exited` event, followed by ending the session by closing the underlying stream. If the code exited due to a fatal error, the Simulator SHOULD precede its `Exited` event with an `Error`-level `Log` event containing a concise explanation of what went wrong. If the Simulator ends the session after the handshake by closing the underlying stream without first sending an `Exited` event, the Frontend SHOULD handle the situation as an internal error in the Simulator.
 
 #### Code Signatures
 
@@ -77,7 +77,7 @@ Backends MAY send human-readable `Log` events at any time after the handshake is
 
 This example session is provided as a resource to help developers imagine one of the possibilities of a valid exchange using the Protocol. Multi-line JSON, as well as comments preceded by a double-slash (`//`), are not valid in a true implementation and are used to aid the reader in understanding.
 
-```jsonc
+```json
 // The Frontend begins the session by sending a handshake.
 // Frontend:
 { "Handshake": { "version": 1, "extensions": [] } }
