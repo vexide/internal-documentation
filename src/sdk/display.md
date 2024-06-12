@@ -90,7 +90,7 @@ BMP-formatted images can be read using the `vexImageBmpRead` function. It return
 #### BMP reading postconditions
 
 - If the image read operation failed, the function returns `0`.
-- If the image read operation was successful, the function returns `1` and `oBuf` is updated as described in [[#The `v5_image` struct]].
+- If the image read operation was successful, the function returns `1` and `oBuf` is updated as described in [The `v5_image` struct](#the-v5_image-struct).
 
 ### PNG images
 
