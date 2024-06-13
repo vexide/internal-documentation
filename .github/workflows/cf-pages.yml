@@ -28,7 +28,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: b1721f81ad0d3eecf8aa1ac29588ede8
-          projectName: pros-rs-internals
+          projectName: internal-documentation
           directory: book
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
