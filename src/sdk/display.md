@@ -7,9 +7,9 @@ The Vex V5 SDK contains functions for drawing to the V5’s 480 × 272 pixel LCD
 Several publicly released code signature options affect the operation of the display.
 
 - `V5_SIG_OPTIONS_INDG` (`1 << 0`): Inverts the background color to pure white.
-- `V5_SIG_OPTIONS_THDG` (`1 << 2`): If VEXos is in Light Mode, inverts the background color to pure white.
+- `V5_SIG_OPTIONS_THDG` (`1 << 2`): If VEXos is using the Light theme, inverts the background color to pure white.
 
-If both options are enabled at once, the background will be inverted twice, causing a dark background color in light mode and a light background color in dark mode.
+If both options are enabled at once, the themed option will win and the background will stay black if the V5 is using the Dark theme.
 
 ## Foreground and background colors
 
