@@ -6,16 +6,14 @@ The Vex V5 SDK contains functions for drawing to the V5’s 480 × 272 pixel LCD
 
 Several publicly released code signature options affect the operation of the display.
 
-- `V5_SIG_OPTIONS_INDG` (`1 << 0`): Swaps the default background and foreground colors
-- `V5_SIG_OPTIONS_THDG` (`1 << 2`): If VEXos is in Light Mode, swaps the default background and foreground colors
+- `V5_SIG_OPTIONS_INDG` (`1 << 0`): Inverts the background color to pure white.
+- `V5_SIG_OPTIONS_THDG` (`1 << 2`): If VEXos is in Light Mode, inverts the background color to pure white.
 
-If both options are enabled at once, they will both apply, causing a dark background color in light mode and a light background color in dark more.
+If both options are enabled at once, the background will be inverted twice, causing a dark background color in light mode and a light background color in dark mode.
 
 ## Foreground and background colors
 
-Foreground and background colors can be set using `vexDisplayForegroundColor` and `vexDisplayBackgroundColor`. These colors will then be used for all future display calls unless changed again. In most programs the foreground starts white (`#ffffff`) and the background starts black (`#000000`) but this isn’t guaranteed and can be changed using the program’s code signature. Colors are `u32`s in the format `0x00RRGGBB` where `R`, `G`, and `B` are the red, green, and blue components.
-
-The foreground is used as the color for every `vexDisplay*Draw`/`vexDisplay*Fill`-form function, and is the color used to draw text. The background can be considered the “eraser” and is used as the color for every `vexDisplay*Clear`-form method, is drawn behind opaque text, and is used to clear the screen by `vexDisplayErase`.
+Foreground and background colors can be set using `vexDisplayForegroundColor` and `vexDisplayBackgroundColor`. These colors will then be used for all future display calls unless changed again. In all programs, the foreground starts off-white (`#c0c0ff`). By default, the background starts black (`#000000`) but this isn’t guaranteed and can be changed using the program’s code signature. Colors are `u32`s in the format `0x00RRGGBB` where `R`, `G`, and `B` are the red, green, and blue components.
 
 ## Erasing
 
