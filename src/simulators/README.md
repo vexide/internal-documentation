@@ -18,7 +18,7 @@ There are several code executors for VEX simulators, in varying stages of comple
 
 - [vexide/pros-simulator: Run PROS robot code without the need for real VEX V5 hardware.](https://github.com/vexide/pros-simulator)
 
-    This code executor compiles vexide robot code to WebAssembly and runs it in a sandbox. It, as well as vexide, are not currently being maintained.
+    This code executor compiles vexide robot code to WebAssembly and runs it in a sandbox. It, as well as pros-rs, are not currently being maintained.
 
 - [vexide/vex-v5-sim: A simulator for the VEX V5 Brain. AKA The Vimulator.](https://github.com/vexide/vex-v5-sim)
 
