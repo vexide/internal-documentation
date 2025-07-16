@@ -8,5 +8,5 @@ title = "vexide internal docs"
 [output.html]
 git-repository-url = "https://github.com/vexide/internal-documentation"
 fold = { enable = true, level = 2 }
-site-url = "internals.pros.rs"
+site-url = "internals.vexide.dev"
 mathjax-support = true

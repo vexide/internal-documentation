@@ -44,4 +44,4 @@ here is a simple graph of the project structure:
     - [pros-simulator-server](https://crates.io/crates/pros-simulator-server) (Standalone wrapper over the wasm backend)
 - [vex-v5-sim](https://github.com/vexide/vex-v5-sim) (WIP QEMU simulator backend)
 - [internal-documentation](https://github.com/vexide/internal-documentation) (This website)
-- [website](https://github.com/vexide/website) (Our [main page](https://pros.rs))
+- [website](https://github.com/vexide/website) (Our [main page](https://vexide.dev))
