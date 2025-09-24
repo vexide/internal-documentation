@@ -119,4 +119,24 @@ When calling `vexDisplayRender`, enabling the `bVsyncWait` parameter will sleep 
 
 ## Font and text size
 
-The functions `vexDisplayTextSize` and `vexDisplayFontNamedSet` do not appear to affect font or text size in a way that is accessible to the user.
+The text drawn by the `vexDisplayPrintf` function can be customized in size and font. To choose a font, the `vexDisplayFontNamedSet` function can be called with a parameter of either `"monospace"` or `"proportional"`, specifying either a fixed-width font or a variable-width font.
+
+Similiarly, the `vexDisplayTextSize` function can be used to customize the size of the text by specifying a fractional font size. For example, passing `1` and `2` will set the text to be ½ of "full size," and passing `2` and `3` will set the text to be ⅔ of full size.
+
+The default configuration is the `monospace` font at ⅓ size.
+
+Utility functions like `vexDisplayBigString` will change the font size to a preset value:
+
+- Big (`vexDisplayBigString` or `fontType::monoXL`): `vexDisplayTextSize(2, 3)`
+- Normal (`vexDisplayString` or `fontType::monoM`): `vexDisplayTextSize(1, 3)`
+- Small (`vexDisplaySmallStringAt` or `fontType::monoS`): Seems to be around `vexDisplayTextSize(1, 4)`
+
+The string measuring functions `vexDisplayStringWidth`/`Height` will use the current font family and font size when calculating text height and width.
+
+```rs
+// Draw "Hello, world!" at (50, 50) in 1/4 size
+// in the proportional font with no background color:
+vexDisplayFontNamedSet(c"proportional".as_ptr());
+vexDisplayTextSize(1, 4); // small, 1/4 of full size
+vexDisplayPrintf(50, 50, false as i32, "Hello, world!");
+```
