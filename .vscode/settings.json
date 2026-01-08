@@ -6,5 +6,10 @@
         "Hydrozoa",
         "Serde",
         "vexide"
-    ]
+    ],
+    "excalidraw.image": {
+        "exportScale": 2,
+        "exportWithBackground": false,
+        "exportWithDarkMode": true
+    }
 }
