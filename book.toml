@@ -1,7 +1,6 @@
 [book]
 authors = ["Gavin Niederman", "Lewis McClelland", "Tropical"]
 language = "en"
-multilingual = false
 src = "src"
 title = "vexide internal docs"
 
