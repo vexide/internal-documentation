@@ -15,16 +15,14 @@ There are several code executors for VEX simulators, in varying stages of comple
 - [LemLib/v5-sim-engine](https://github.com/LemLib/v5-sim-engine)
 
   This code executor, physics engine, and frontend combo uses a modified version of the PROS kernel to compile and run the robot code as a native executable. It is not currently being maintained.
-
 - [vexide/pros-simulator: Run PROS robot code without the need for real VEX V5 hardware.](https://github.com/vexide/pros-simulator)
 
     This code executor compiles vexide robot code to WebAssembly and runs it in a sandbox. It, as well as pros-rs, are not currently being maintained.
-
-- [vexide/vex-v5-sim: A simulator for the VEX V5 Brain. AKA The Vimulator.](https://github.com/vexide/vex-v5-sim)
+- [vexide/vex-v5-qemu: CPU1-level user code emulation of the VEX V5 Brain in QEMU](https://github.com/vexide/vex-v5-qemu)
 
     A unique, QEMU-based code executor, this project aims to accurately emulate a VEX V5 brain.
-
-- There is a proof-of-concept WebAssembly code executor for Vexide.
+- All vexide programs are cross-platform by default and be compiled and run on personal computers as long as they depend on a desktop-compatible SDK.
+    - [vex-sdk-mock](https://github.com/vexide/vex-sdk/tree/main/packages/vex-sdk-mock) is a minimal SDK that runs on all platforms and ignores any requests to control VEX hardware such as motors and sensors. It is enabled by default in new vexide projects, but also can be toggled by enabling its namesake Cargo feature in vexide.
 
 ## Physics Backend
 

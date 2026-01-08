@@ -1,5 +1,5 @@
 [book]
-authors = ["Gavin-Niederman"]
+authors = ["Gavin Niederman", "Lewis McClelland", "Tropical"]
 language = "en"
 multilingual = false
 src = "src"
