@@ -6,6 +6,8 @@ title = "vexide internal docs"
 
 [output.html]
 git-repository-url = "https://github.com/vexide/internal-documentation"
+edit-url-template = "https://github.com/vexide/internal-documentation/edit/main/{path}"
 fold = { enable = true, level = 2 }
-site-url = "internals.vexide.dev"
+cname = "internals.vexide.dev"
+site-url = "/"
 mathjax-support = true
