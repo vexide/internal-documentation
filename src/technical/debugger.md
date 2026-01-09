@@ -103,3 +103,36 @@ When breakpoints are hit, they generally turn into prefetch aborts. In the debug
 Once the debugger knows it's going to stop, it collects the current state of the processor for inspection and modification by the GDB client inside an instance of `DebugEventContext`. Then, when the debugger is ready to return, it restores the (possibly modified) general purpose registers and processor state before jumping back to user code.
 
 Support for dedicated floating point registers isn't implemented right now, which means it's not possible to see some floating point values from GDB. The main work for this feature will be updating the exception handling code to store these in the context struct.
+
+### User setup and usage
+
+Currently, users activate the debugger by creating a `V5Debugger` struct and passing it to the `install` function. They then enter debug mode by explicitly calling the `breakpoint` function.
+
+```rust
+#[vexide::main(banner(enabled = false))]
+async fn main(_peripherals: Peripherals) {
+    v5_debugger::install(V5Debugger::new(StdioTransport::new()));\
+
+    v5_debugger::breakpoint();
+
+		let iters = black_box(80);
+    let n = fib(iters);
+    black_box(n);
+}
+```
+
+This process probably needs to be improved before the debugger is finished. It's possible that it'd be helpful for user code to own the V5Debugger instance even after installing it, for instance.
+
+Here are some useful GDB commands for the vexide debugger:
+
+- `target remote | cargo v5 terminal` will connect to the debugger over the V5's USB serial port. Works with the `StdioTransport`.
+    - Note that GDB will initiate communication with the V5, not the other way around.
+    - This currently requires using a version of cargo-v5 from the `fix/stdin-buffering` branch.
+- `layout asm` will show the current assembly the processor is running.
+- After running the above command, `focus cmd` will let you use the up and down arrow keys to quickly select a previous command.
+- `set debug remote 1` will make GDB print out all its communications with the debugger.
+- `break fib` will set a software breakpoint on the `fib` function.
+- `si` will step execution forward by an instruction.
+- `monitor help` will show the special commands specific to the vexide debugger.
+- `c` will continue execution as normal.
+- `disconnect` will disconnect unceremoniously.
