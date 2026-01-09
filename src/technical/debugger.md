@@ -42,4 +42,14 @@ As mentioned previously in this document, the vexide debugger is able to capture
 
 ![A diagram of vexide's vector table showing that some exceptions are handled by the library itself and others are handled by the VEX SDK.](./vector-table-simple.excalidraw.svg)
 
-The vexide debugger must install its own vector table to handle debug exceptions.
+The vexide debugger needs its own vector table to manage debug exceptions triggered by breakpoints. However, since a processor can only have one vector table active at a time, any vector table we install must also be able to handle the responsibilities of any exception handlers configured by the user’s framework (e.g., vexide or PROS). Instead of incorporating framework-specific logic to simply redirect to those specific handlers, we opted to have our vector table function as a flexible overlay. When the debugger is initialized, it stores the items in the current vector table, anticipating the presence of an existing set of handlers that are already set up and capable of handling the standard exceptions. It then re-configures the processor to use its own vector table, which is specially configured to fall through for any exceptions out of its scope.
+
+![A diagram of the debugger's overlay vector table showing that some exceptions are handled by the debugger and others fall through to the framework's original set of exception handlers.](vector-table-overlay.excalidraw.svg)
+
+This architecture is useful because it makes few assumptions. For instance, if another error-handling library overwrites the vector table with its own custom data abort handlers, the debugger will be completely compatible with it at runtime because its own vector table will dynamically fall through to whatever else is currently in use.
+
+### Persistent breakpoints
+
+When a debugger wants to continue execution after a breakpoint, it initially seems reasonable to just try returning from that breakpoint's exception handler. However, it wouldn't have much luck doing so without changing some state first: if the program tried to return back to its old state, the exact same breakpoint would just fire again! This would leave the user in an infinite loop, unable to continue until they decide to disable the breakpoint that originally caused their program to halt. It turns out, continuing program execution just isn't possible without temporarily disabling this breakpoint.
+
+To solve this problem, the vexide debugger single-steps one instruction with the original breakpoint turned off. Then, since the processor is no longer affected by the original breakpoint, the debugger turns it back on and continues execution as normal. As such, one hardware breakpoint must be reserved for single stepping even if the user isn't using that functionality directly.

@@ -11,5 +11,6 @@
         "exportScale": 2,
         "exportWithBackground": false,
         "exportWithDarkMode": true
-    }
+    },
+    "excalidraw.theme": "dark"
 }
