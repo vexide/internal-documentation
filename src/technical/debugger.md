@@ -87,7 +87,7 @@ When the breakpoint instruction is initially changed in memory, it likely isn't 
 
 ### Debug register access
 
-The Cortex-A9's ARMv7-A architecture defines a plethora of debug registers that can be used to control the processor's breakpoints and watchpoints, among other things. There are two methods for accessing them: either as registers in Coprocessor 14 (cp14) or as a `struct` at a special place in memory. The latter is preferable because it works better with Rust's ownership model and is overall simpler to use. While each access to cp14 requires a specially encoded `mcr` or `mrc` assembly instruction, it's trivial to index an array in memory. However, in order to take advantage of struct-like MMIO method, the debugger makes a few accesses to cp14 when it first initializes to determine the base address of those memory-mapped regisers. This is done by accessing two registers:
+The Cortex-A9's ARMv7-A architecture defines a plethora of debug registers that can be used to control the processor's breakpoints and watchpoints, among other things. There are two methods for accessing them: either as registers in Coprocessor 14 (cp14) or as a `struct` at a special place in memory. The latter is preferable because it works better with Rust's ownership model and is overall simpler to use. While each access to cp14 requires a specially encoded `mcr` or `mrc` assembly instruction, it's trivial to index an array in memory. However, in order to take advantage of struct-like MMIO method, the debugger makes a few accesses to cp14 when it first initializes to determine the base address of those memory-mapped registers. This is done by accessing two registers:
 
 - `DBGDRAR` (Debug ROM Address Register) defines the address in memory of a ROM Table that encodes where to access the debug registers of each processor on the device. We don't access this table whatsoever.
 - `DBGDSAR` (Debug Self Address Offset Register) defines the offset of the current processor's debug registers in memory from the start of the ROM Table.
@@ -111,11 +111,11 @@ Currently, users activate the debugger by creating a `V5Debugger` struct and pas
 ```rust
 #[vexide::main(banner(enabled = false))]
 async fn main(_peripherals: Peripherals) {
-    v5_debugger::install(V5Debugger::new(StdioTransport::new()));\
+    v5_debugger::install(V5Debugger::new(StdioTransport::new()));
 
     v5_debugger::breakpoint();
 
-		let iters = black_box(80);
+    let iters = black_box(80);
     let n = fib(iters);
     black_box(n);
 }
@@ -126,8 +126,8 @@ This process probably needs to be improved before the debugger is finished. It's
 Here are some useful GDB commands for the vexide debugger:
 
 - `target remote | cargo v5 terminal` will connect to the debugger over the V5's USB serial port. Works with the `StdioTransport`.
-    - Note that GDB will initiate communication with the V5, not the other way around.
-    - This currently requires using a version of cargo-v5 from the `fix/stdin-buffering` branch.
+  - Note that GDB will initiate communication with the V5, not the other way around.
+  - This currently requires using a version of cargo-v5 from the `fix/stdin-buffering` branch.
 - `layout asm` will show the current assembly the processor is running.
 - After running the above command, `focus cmd` will let you use the up and down arrow keys to quickly select a previous command.
 - `set debug remote 1` will make GDB print out all its communications with the debugger.
