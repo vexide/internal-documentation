@@ -7,6 +7,7 @@
     - [Startup](./technical/startup.md)
     - [Critical Section](./technical/critical-section.md)
     - [Debugger](./technical/debugger.md)
+    - [VEX V5 Environment](./technical/environment.md)
 - [VEX SDK Tech Notes](./sdk/README.md)
     - [Display SDK Notes](./sdk/display.md)
 - [Hard To Implement Features](./hard-to-implement/README.md)
