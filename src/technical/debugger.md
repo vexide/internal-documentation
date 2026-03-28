@@ -1,6 +1,6 @@
 # VEX V5 Debugger
 
-Despite [long-term interest](https://www.vexforum.com/t/debugger-for-vex-v5/91619) by the VEX community, there is currently no complete on-device debugger for the VEX V5 platform.
+The vexide team is working on developing an on-device debugger for the VEX V5 platform to satisfy a [long-term interest](https://www.vexforum.com/t/debugger-for-vex-v5/91619) by the VEX community for better debugging tools.
 
 However, there has been some past work on implementing one on previous VEX platforms. For instance, the ROBOTC language and framework (which targeted the VEX Cortex platform) included a feature-rich [graphical debugger](https://www.robotc.net/WebHelpVEX/index.htm#Resources/topics/ROBOTC_Debugger/Program_Debugging.htm) that took advantage of the language's virtual machine environment. Additionally, the PROS project, also targeting the Cortex, initially included a prototype of a real-time, key/value dashboard called "JINX Debugger" (despite not including the traditional features of a [debugger](https://en.wikipedia.org/wiki/Debugger)). Ultimately, neither ROBOTC nor JINX were ported to the more recent VEX V5.
 
