@@ -17,3 +17,26 @@ The Zynq 7000 has an onboard FPGA which is used for things like UART and control
 User code execution begins at the address `0x0380_0020` in the *System* processor mode in *Secure* state. Since *System* is a PL1 (permission-level-one) mode, it has permission to make operating-system-level changes to its environment: for instance, user code can set the system interrupt handler or access the system debug registers. This level of freedom is a feature intended to allow custom scheduling mechanisms and the like. PROS uses these capabilities to run FreeRTOS directly on-device.
 
 Programs are expected to [use the VEX SDK](../sdk/) to interface with most peripherals. Some peripherals (e.g. smart devices) are controlled indirectly by CPU0, and the SDK handles sending the required control messages between the two CPUs. Periodically calling `vexTasksRun` allows this communication to take place smoothly - without it, sensors might not receive new values and buffered outputs might not flush.
+
+### System Configuration
+
+This section contains the initial values of some common system registers.
+
+```txt
+SCTLR: 0b00001000110001010001100001111101
+```
+
+### Stack Sizes
+
+([Details](stack_sizes.txt))
+
+VEXos initializes each CPU mode's stack pointer to a smallish stack outside of normal user memory. If you need more space, you might need to allocate your own stack in user memory, then switch to it on startup. Here are the sizes and addresses of the default stacks:
+
+| Stack | Size | Start | End |
+| ----- | ---- | ----- | --- |
+| SYS | `0x2000` (8 KB) | `0x0371C090` | `0x0371E090` |
+| IRQ | `0x2000` (8 KB) | `0x0371E090` | `0x03720090` |
+| SVC | `0x0800` (2 KB) | `0x03720090` | `0x03720890` |
+| ABT | `0x0400` (1 KB) | `0x03720890` | `0x03720C90` |
+| FIQ | `0x0400` (1 KB) | `0x03720C90` | `0x03721090` |
+| UND | `0x0400` (1 KB) | `0x03721090` | `0x03721490` |

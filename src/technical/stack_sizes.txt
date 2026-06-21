@@ -1,0 +1,42 @@
+Source: <https://www.vexforum.com/raw/147047>
+
+Constants:
+_ABORT_STACK_SIZE = DEFINED(_ABORT_STACK_SIZE) ? _ABORT_STACK_SIZE : 1024;
+_SUPERVISOR_STACK_SIZE = DEFINED(_SUPERVISOR_STACK_SIZE) ? _SUPERVISOR_STACK_SIZE : 2048;
+_FIQ_STACK_SIZE = DEFINED(_FIQ_STACK_SIZE) ? _FIQ_STACK_SIZE : 1024;
+_UNDEF_STACK_SIZE = DEFINED(_UNDEF_STACK_SIZE) ? _UNDEF_STACK_SIZE : 1024;
+
+Memory Layout:
+.stack          0x0371c090     0x5400
+                0x0371c090                . = ALIGN (0x10)
+                0x0371c090                _stack_end = .
+                0x0371e090                . = (. + _STACK_SIZE)
+ *fill*         0x0371c090     0x2000
+                0x0371e090                _stack = .
+                0x0371e090                __stack = _stack
+                0x0371e090                . = ALIGN (0x10)
+                0x0371e090                _irq_stack_end = .
+                0x03720090                . = (. + _STACK_SIZE)
+ *fill*         0x0371e090     0x2000
+                0x03720090                __irq_stack = .
+                0x03720090                _supervisor_stack_end = .
+                0x03720890                . = (. + _SUPERVISOR_STACK_SIZE)
+ *fill*         0x03720090      0x800
+                0x03720890                . = ALIGN (0x10)
+                0x03720890                __supervisor_stack = .
+                0x03720890                _abort_stack_end = .
+                0x03720c90                . = (. + _ABORT_STACK_SIZE)
+ *fill*         0x03720890      0x400
+                0x03720c90                . = ALIGN (0x10)
+                0x03720c90                __abort_stack = .
+                0x03720c90                _fiq_stack_end = .
+                0x03721090                . = (. + _FIQ_STACK_SIZE)
+ *fill*         0x03720c90      0x400
+                0x03721090                . = ALIGN (0x10)
+                0x03721090                __fiq_stack = .
+                0x03721090                _undef_stack_end = .
+                0x03721490                . = (. + _UNDEF_STACK_SIZE)
+ *fill*         0x03721090      0x400
+                0x03721490                . = ALIGN (0x10)
+                0x03721490                __undef_stack = .
+                0x03721490                _end = .
