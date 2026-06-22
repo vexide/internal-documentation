@@ -13,16 +13,14 @@ The code executor is probably the most important part of the simulator. Its job 
 There are several code executors for VEX simulators, in varying stages of completion. Here are a few of the ones I know about:
 
 - [LemLib/v5-sim-engine](https://github.com/LemLib/v5-sim-engine)
-
   This code executor, physics engine, and frontend combo uses a modified version of the PROS kernel to compile and run the robot code as a native executable. It is not currently being maintained.
 - [vexide/pros-simulator: Run PROS robot code without the need for real VEX V5 hardware.](https://github.com/vexide/pros-simulator)
-
     This code executor compiles vexide robot code to WebAssembly and runs it in a sandbox. It, as well as pros-rs, are not currently being maintained.
 - [vexide/vex-v5-qemu: CPU1-level user code emulation of the VEX V5 Brain in QEMU](https://github.com/vexide/vex-v5-qemu)
-
-    A unique, QEMU-based code executor, this project aims to accurately emulate a VEX V5 brain.
+    A unique, QEMU-based code executor, this project aims to accurately emulate a VEX V5 brain. Many device APIs are unimplemented; mainly intended for framework development.
 - All vexide programs are cross-platform by default and be compiled and run on personal computers as long as they depend on a desktop-compatible SDK.
     - [vex-sdk-mock](https://github.com/vexide/vex-sdk/tree/main/packages/vex-sdk-mock) is a minimal SDK that runs on all platforms and ignores any requests to control VEX hardware such as motors and sensors. It is enabled by default in new vexide projects, but also can be toggled by enabling its namesake Cargo feature in vexide.
+    - [RoboScope](https://github.com/vexide/roboscope) is a desktop SDK that can simulate a V5's display, connect to an external physics backend, and connect to a serial device simulator.
 
 ## Physics Backend
 
@@ -33,5 +31,5 @@ This is a piece of software that decides robot and peripheral state (including v
 The simulator frontend is usually the only part the user sees. It combines information from the physics backend and output from the code executor to show and overview of the simulation's progress. It also sends user input (e.g. joystick/touch) to the code executor to act accordingly.
 
 - [vexide/pros-simulator-gui](https://github.com/vexide/pros-simulator-gui)
-
-  A cross-platform Tauri application, it uses pros-simulator's frontend interface to start and manage a compatible simulator.
+  A cross-platform Tauri application, it uses pros-simulator's frontend interface to start and manage a compatible simulator. Unmaintained.
+- [roboscope-viewer](https://github.com/vexide/roboscope) is a display emulator viewer app for RoboScope which supports touch input and thus allows you to interact with robot UIs.
