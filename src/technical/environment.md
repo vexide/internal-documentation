@@ -2,7 +2,7 @@
 
 ## Hardware
 
-- **System-on-chip**: Zynq 7000 ([Reference manual](https://docs.amd.com/viewer/book-attachment/mxcNFn1EFZjLI1eShoEn5w/~F6mCjSrb3_BDetD7782sA-mxcNFn1EFZjLI1eShoEn5w))
+- **System-on-chip**: Zynq 7000 ([Reference manual](https://docs.amd.com/r/en-US/ug585-zynq-7000-SoC-TRM/), [PDF](Zynq7000_TRM_v1.14.pdf))
 - **Processor**: Cortex A9 ([Reference manual](https://documentation-service.arm.com/static/5e8e2ab9fd977155116a7035?token=))
 - **Architecture**: ARMv7-A ([Reference manual](https://developer.arm.com/documentation/ddi0406/latest))
 
