@@ -9,11 +9,8 @@ For info on contributing guidelines, please read [CONTRIBUTING.md](https://githu
 ## Project structure
 
 Because vexide is split into multiple crates and multiple repositories,
-
 finding the part of vexide you want to work on can be a little overwhelming.
-
 To hopefully make it easier to find what you are looking for,
-
 here is a simple graph of the project structure:
 
 - [vexide](https://github.com/vexide/vexide)
