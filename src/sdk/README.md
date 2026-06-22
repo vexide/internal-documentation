@@ -138,3 +138,9 @@ fn vexDeviceMotorVoltageSet(...args) {
 One can infer from this that the offset of `vexDeviceMotorVoltageSet`'s function pointer relative to the start of the jumptable array is `0x35c`.
 
 When analyzing libraries related to the VEX SDK, you should keep in mind that certain first-party VEX products (e.g. `libv5rt.a`) have licenses which include clauses intended to prevent reverse engineering such as disassembly or decompilation. We believe these agreements do not apply to any of the actions described in these notes. However, we are not lawyers, this is not legal advice, and you should exercise due caution.
+
+## Partner SDK
+
+VEX has released both a public version of the V5's SDK (`libv5rt`) and a private version that's exclusively available to VEX partners (`libv5rts`). Developers who have been provided access to the Partner SDK and its documentation have historically been placed under an NDA, but we can infer from analysis of compiled PROS framework that it consists of a stripped-down of the public SDK with the VEXcode framework removed.
+
+Since vexide isn't a VEX partner, we've created our own open-source SDK, [vex-sdk-jumptable](https://lib.rs/crates/vex-sdk-jumptable), which takes the role of `libv5rts`.

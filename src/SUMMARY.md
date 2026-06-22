@@ -10,6 +10,7 @@
     - [VEX V5 Environment](./technical/environment.md)
 - [VEX SDK Tech Notes](./sdk/README.md)
     - [Display SDK Notes](./sdk/display.md)
+    - [Task Scheduler](./sdk/tasks.md)
 - [Hard To Implement Features](./hard-to-implement/README.md)
     - [Hot/Cold Linking](./hard-to-implement/hot-cold.md)
     - [Stack Unwinding](./hard-to-implement/stack-unwinding.md)
