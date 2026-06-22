@@ -141,6 +141,6 @@ When analyzing libraries related to the VEX SDK, you should keep in mind that ce
 
 ## Partner SDK
 
-VEX has released both a public version of the V5's SDK (`libv5rt`) and a private version that's exclusively available to VEX partners (`libv5rts`). Developers who have been provided access to the Partner SDK and its documentation have historically been placed under an NDA, but we can infer from analysis of compiled PROS framework that it consists of a stripped-down of the public SDK with the VEXcode framework removed.
+VEX has released both a public version of the V5's SDK (`libv5rt`) and a private version that's exclusively available to VEX partners (`libv5rts`). Developers who have been provided access to the Partner SDK and its documentation have historically been placed under an NDA, but we can infer from analysis of compiled PROS framework binaries that it consists of a stripped-down of the public SDK with the VEXcode framework removed.
 
 Since vexide isn't a VEX partner, we've created our own open-source SDK, [vex-sdk-jumptable](https://lib.rs/crates/vex-sdk-jumptable), which takes the role of `libv5rts`.
