@@ -1,74 +1,45 @@
 # Startup
 
-vexide produces working binaries without linking to any external libraries.
-This means that we have to write all of the code that gets run during startup.
-Luckily program startup is fairly simple, its just a pain to set up.
+vexide produces working binaries without linking to any external libraries. This means that we have to write all of the code that gets run during startup.
 
 The boot process for programs works as such:
+
 1) VEXos loads the program into memory at 0x3800000
-2) VEXos reads the cold header and changes program behavior accordingly.
-3) VEXos starts program execution at 0x3800020 (the address just after the cold header)
-4) vexide zeroes the entire BSS section and sets the stack pointer to the bottom of the stack
-5) vexide initializes the heap allocator
-6) vexide starts the async executor and the users main function inside it
+2) VEXos reads the program's code signature and changes program behavior accordingly.
+3) VEXos sets up a [default stack](./environment/#stack-sizes) and begins program execution at 0x3800020 (the address just after the code signature)
+4) vexide sets up a larger stack, runs its program patch routine (which supports differential uploading), and jumps to the Rust std library entrypoint
+5) The user's main function calls vexide's post-main startup routine, wherein vexide sets up the heap and starts the async executor
 
 ## Explanations
 
 The structure of a user program looks like this:
 ![program-anatomy](./program-anatomy.png)
 
-In order to explain the startup code, I will be going over every one of these six steps and how they are implemented.
-
 ### Steps 1-3
 
-Before we can even get to step one we need to get a program building correctly.
-The vexide-startup crate contains a v5.ld file that tells clang how to link vexide programs correctly.
-It tells the linker where cold memory is located and the locations of all of the sections necessary for running programs.
-The only parts of the linker script that are important to understand for the first three steps are in the `.text` section.
+Before we can even get to step one we need to get a program building correctly. Some of vexide's features including differential uploading and custom code signatures require changes to the program memory layout. As such, the vexide-startup crate contains a `vexide.ld` linker script which tells the linker where the program's patch file and code signature is located. This builds on Rust's builtin linker script for VEX V5 that tells it how to lay out each section in a program.
 
-Specifically the `.boot` and `.cold_magic` sections are important.
-`.boot` is located at 0x3800020 and is the entrypoint to the program.
-`.cold_magic` is located at the very start of cold memory (0x3800000) and it stores information that VEXos uses to change the behavior of the program.
-In vexide, we call this "cold_magic" the cold header because it is a more fitting name.
-The name ``cold_magic`` originates from PROS, but it exists in vexcode under the name ``VCodeSig``.
-The first four bytes of the cold header must be the string ``XVX5`` encoded in ascii. The rest of the 32 bytes are used for various program options.
-For more detailed information, look at the docs for the `ColdHeader` struct in vexide.
+The only parts of the linker script that are important to understand for the first three steps are in the `.text` section:
 
-After this build process, steps 1-3 work as intended.
+- `.vexide_boot` is located at `0x3800020` and is the entrypoint to the program.
+- `.code_signature` is located at the very start of user memory (`0x3800000`) and it stores information that VEXos uses to change the behavior of the program. PROS calls this the cold magic / cold header.
+
+The first four bytes of the code signature must be the string `XVX5` encoded in ASCII. The rest of the 32 bytes are used for various program options. For more detailed information, look at the docs for the `CodeSignature` struct in vexide.
 
 ### Step 4
 
-This step is the first, and only, time that assembly is required. Yay!
+vexide defines a function named `_vexide_boot` which is placed in the `.vexide_boot` section previously discussed. VEXos jumps into it at the beginning of a user program, it uses assembly code to set the stack pointer, check whether a patch file is loaded into memory, run the program patcher if needed, and eventually jump to the Rust entrypoint `_start` (which is defined in the source code for `std`).
 
-vexide sets the stack pointer with this inline assembly:
-```asm
-ldr sp, =__stack_start
-```
-This instruction loads the value of ``=__stack_start`` into ``sp`` (the stack pointer register).
-The symbol ``__stack_start`` is defined by the v5.ld linker script and the name is pretty self-explanatory.
+The program patcher is used as a workaround for the fact that VEXos doesn't allow you to edit files on the system, only completely overwrite them, which makes uploading changes very slow. In summary, instead of uploading a program like normal, we instead upload one only consisting of a `bipatch` file which loads itself at a specific address and defines a link to the main program binary (which loads itself at the normal start address, `0x3800000`). This makes use of a VEXos feature called Linked Files, which is discussed in more detail in the [PR that added support for it to rustc](https://github.com/rust-lang/rust/pull/145578).
 
-The next task is to zero the BSS section. vexide uses a loop that increments a pointer to achieve this effect.
-```rust
-unsafe {
-    let mut bss_start = addr_of_mut!(__bss_start);
-    while bss_start < addr_of_mut!(__bss_end) {
-        core::ptr::write_volatile(bss_start, 0);
-        bss_start = bss_start.offset(1);
-    }
-}
-```
-You may think this seems horribly unsafe, and you would be right under normal circumstances;
-however, at this point nothing has set any values in the BSS section and it must be zeroed to avoid corruption.
+### Step 5
 
-### Step 5-6
-
-Steps five and six are pretty simple because at this point we can run any code that doesn't use the heap.
+Step five is pretty simple because at this point we're well into the vanilla Rust `main()` function and can run any code that doesn't allocate on the heap.
 In fact, we use these newfound capabilities to do the incredibly important task of printing our banner. 🏳️‍🌈
 
-Currently, we use [Talc](https://crates.io/crates/talc) for our heap allocator.
-We pass it a range of memory from the start of the heap defined in the linker script all the way to the end.
-Our linker script allocates the largest amount of memory that it can for the heap so vexide programs have the most memory of any V5 Brain library.
+Currently, we override Rust's default allocator and use [Talc](https://crates.io/crates/talc) for our heap because it seems to be a bit better optimized.
+We pass it a range of memory from the start of the heap defined in Rust's linker script all the way to the end.
 
-Spinning up the executor is straightforward. We just call `vexide_async::block_on` on the users main function.
+Spinning up the executor is straightforward. We just call `vexide_async::block_on` on the user's entrypoint.
 
 And with that, we have a booting program!

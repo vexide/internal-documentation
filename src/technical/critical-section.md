@@ -1,6 +1,8 @@
 # Critical Section
 
-vexide has a critical section implementation that is used to ensure that synchonization types are safe from interrupts.
+vexide previously included a critical section implementation that was used to ensure that non-atomic types were safe from interrupts. However, because we've since removed most preemptive multithreading, we found it unnecessary and removed it. The remainder of the document describes the implementation of our critical section while it was present.
+
+---
 
 We use the [``critical_section``](https://crates.io/crates/critical-section) so that libraries that require a critical section implementation can easily access it.
 

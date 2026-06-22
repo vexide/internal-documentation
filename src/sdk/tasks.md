@@ -18,7 +18,7 @@ Although unstable, the scheduler is used internally in VEXcode to implement its 
 
 ## Ticking the Scheduler
 
-By default, user code has full control of when/what code is run: to tick the task scheduler, it must periodically call `vexTasksRun`, which will run any simple task callbacks whose loop interval has elapsed and tick any full tasks that have finished sleeping. Since most system data is updated via tasks, programs should aim to tick the scheduler at least one every ~2ms to ensure they are operating on the latest data.
+By default, user code has full control of when/what code is run: to tick the task scheduler, it must periodically call `vexTasksRun`, which will run any simple task callbacks whose loop interval has elapsed and tick any full tasks that have finished sleeping. Since most system data is updated via tasks, programs should aim to tick the scheduler at least once every ~2ms to ensure they are operating on the latest data.
 
 In programs that use high level frameworks (vexide, PROS, VEXcode), ticking the scheduler is done indirectly by sleeping the current task, which has led to the [widely recognized rule](https://pros.cs.purdue.edu/v5/tutorials/topical/multitasking.html) that all loops should contain a sleep.
 

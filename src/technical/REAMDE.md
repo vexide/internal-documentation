@@ -1,4 +1,4 @@
 # Technical Implementations
 
-vexide is an incredibly low level library and has many implementations that are very technical.
-This chapter aims to make our code easier to understand.
+vexide must operate at a low level with VEXos internals that are generally poorly documented by VEX.
+This chapter contains the findings of our independent investigations of the VEXos system and aims to act as a reference for how we implemented vexide around it.
