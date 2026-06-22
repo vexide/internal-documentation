@@ -15,7 +15,6 @@
     - [Hot/Cold Linking](./hard-to-implement/hot-cold.md)
     - [Stack Unwinding](./hard-to-implement/stack-unwinding.md)
 - [Simulators](./simulators/README.md)
-    - [Protocol](./simulators/protocol.md)
 - [Hydrozoa](./hydrozoa/README.md)
     - [Pipeline](./hydrozoa/pipeline.md)
 - [Archived pros-rs docs](./pros-rs/README.md)

@@ -1,5 +1,8 @@
 # Vexide Simulator Protocol
 
+> [!Important]
+> This page describes a proposed simulator protocol which was ultimately not adopted. You may be instead interested in the [RoboScope](https://github.com/vexide/roboscope) IPC protocol.
+
 The Vexide Simulator Protocol enables communication between VEX robot simulators and user-facing frontends using a JSON-based protocol.
 
 ## Specification
