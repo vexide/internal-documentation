@@ -8,6 +8,8 @@ VEXos has a builtin cooperative task scheduler which is used to maintain interna
 
 **Full tasks** behave more like OS threads: each has its own stack and supports sleeping. These are used to implement VEXcode's threads and tasks API. They are most useful when it'd be too difficult to break a long-running task into a state machine.
 
+Full tasks were initially created for VEXcode's `vex::task` API (a [replacement](https://www.vexforum.com/t/how-to-use-vex-threads/100901/26?u=lewis) for the ROBOTC scheduler) but were later also used as the implementation for `vex::thread`, their version of C++'s `std::thread` API. Both classes do effectively the same thing under the hood.
+
 ## Stability
 
 The task scheduler is considered a perma-unstable API by VEX, and, as such, the functions for controlling it are stripped out of the VEX [Partner SDK](/sdk/#partner-sdk). From the Partner SDK, the task scheduler is treated as an implementation detail of the `vexBackgroundProcessing` function, which is internally made to call `vexTasksRun` (and is a no-op on the public SDK).
