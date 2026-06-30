@@ -34,9 +34,9 @@ VEXos initializes each CPU mode's stack pointer to a smallish stack outside of n
 
 | Stack | Size | Start | End |
 | ----- | ---- | ----- | --- |
-| User/System | `0x2000` (8 KB) | `0x0371C090` | `0x0371E090` |
-| IRQ | `0x2000` (8 KB) | `0x0371E090` | `0x03720090` |
-| Supervisor | `0x0800` (2 KB) | `0x03720090` | `0x03720890` |
-| Abort | `0x0400` (1 KB) | `0x03720890` | `0x03720C90` |
-| FIQ | `0x0400` (1 KB) | `0x03720C90` | `0x03721090` |
-| Undefined | `0x0400` (1 KB) | `0x03721090` | `0x03721490` |
+| User/System | `0x2000` (8 KiB) | `0x0371C090` | `0x0371E090` |
+| IRQ | `0x2000` (8 KiB) | `0x0371E090` | `0x03720090` |
+| Supervisor | `0x0800` (2 KiB) | `0x03720090` | `0x03720890` |
+| Abort | `0x0400` (1 KiB) | `0x03720890` | `0x03720C90` |
+| FIQ | `0x0400` (1 KiB) | `0x03720C90` | `0x03721090` |
+| Undefined | `0x0400` (1 KiB) | `0x03721090` | `0x03721490` |
