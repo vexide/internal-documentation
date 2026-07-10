@@ -1,4 +1,4 @@
-# Display SDK Notes
+# Display API
 
 The Vex V5 SDK contains functions for drawing to the V5’s 480 × 272 pixel LCD screen. The origin point of the display is at the top left, and the point `(479, 271)` is at the bottom right.
 

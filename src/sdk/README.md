@@ -1,4 +1,4 @@
-# VEX SDK Tech Notes
+# The VEX V5 SDK
 
 The VEX SDK is a closed-source library of functions built-in to VEXos which can be called by user code to perform I/O operations like moving motors, reading sensors, and controlling the V5 brain's builtin LCD screen. Since the SDK is largely undocumented, it can be difficult to develop software (like vexide) which requires its functionality. This section includes notes on how to use various portions of the public SDK and is intended as a resource for developers creating software that targets the V5.
 
