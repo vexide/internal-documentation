@@ -10,7 +10,7 @@
     - [VEX V5 Environment](./technical/environment.md)
 - [VEX SDK](./sdk/README.md)
     - [Display API](./sdk/display.md)
-    - [Device APIs](./sdk/tasks.md)
+    - [Device APIs](./sdk/devices.md)
     - [Task Scheduler](./sdk/tasks.md)
 - [Hard To Implement Features](./hard-to-implement/README.md)
     - [Hot/Cold Linking](./hard-to-implement/hot-cold.md)
