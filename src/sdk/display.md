@@ -6,18 +6,20 @@ The Vex V5 SDK contains functions for drawing to the V5’s 480 × 272 pixel LCD
 
 Several publicly released code signature options affect the operation of the display.
 
-- `V5_SIG_OPTIONS_INDG` (`1 << 0`): Inverts the background color to pure white.
-- `V5_SIG_OPTIONS_THDG` (`1 << 2`): If VEXos is using the Light theme, inverts the background color to pure white.
+- `V5_SIG_OPTIONS_INDG` (`1 << 0`): Swaps the default foreground and background colors.
+- `V5_SIG_OPTIONS_THDG` (`1 << 2`): Swaps the default foreground and background colors, but only if VEXos is using the Light theme.
 
-If both options are enabled at once, the themed option will win and the background will stay black if the V5 is using the Dark theme.
+If both options are enabled at once, the theme-dependent option will win.
 
 ## Foreground and background colors
 
-Foreground and background colors can be set using `vexDisplayForegroundColor` and `vexDisplayBackgroundColor`. These colors will then be used for all future display calls unless changed again. In all programs, the foreground starts off-white (`#c0c0ff`). By default, the background starts black (`#000000`) but this isn’t guaranteed and can be changed using the program’s code signature. Colors are `u32`s in the format `0x00RRGGBB` where `R`, `G`, and `B` are the red, green, and blue components.
+Foreground and background colors can be set using `vexDisplayForegroundColor` and `vexDisplayBackgroundColor`. These colors will then be used for all future display calls unless changed again. Colors are `u32`s in the format `0x00RRGGBB` where `R`, `G`, and `B` are the red, green, and blue components. The default foreground color is `0x00ffffff` (pure white) and the default background color is `0x00000000` (pure black) unless they have been swapped via the code signature.
+
+Upon program startup, the entire canvas is filled with the default background color.
 
 ## Erasing
 
-`vexDisplayErase` acts similarly to `vexDisplayRectFill` but uses the background color instead and always fills the entire screen. As with other drawing-related functions, portions of the screen that are outside the clip region will not be modified.
+`vexDisplayErase` acts similarly to `vexDisplayRectFill` but uses the [default background color](#code-signature) instead and always fills the entire screen. As with other drawing-related functions, portions of the screen that are outside the clip region will not be modified.
 
 ## Scrolling
 
@@ -45,9 +47,9 @@ The operation does not edit the top `nStartLine` (150) pixels because they are o
 
 The parameters of `vexDisplayRect*`-form methods are inclusive, meaning that the coordinate pairs you specify are inside the rectangle that is created. Thus, the area of a rectangle created with this set of SDK functions is `(1 + x2 - x1) * (1 + y2 - y1)` pixels.
 
-## Circles
+## Lines and Circles
 
-Circles are not antialiased.
+Lines and circles are not antialiased and are rendered with [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham's_line_algorithm) and [Bresenham's circle algorithm](https://en.wikipedia.org/wiki/Midpoint_circle_algorithm), respectively.
 
 ## Text
 
