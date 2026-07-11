@@ -31,7 +31,7 @@ void vexDisplayForegroundColor(uint32_t col);
 
 In cases where more context is needed, it's best to search for the SDK function's name in the [PROS Kernel source code](https://github.com/purduesigbots/pros) to see how they use it, or view the source of the PROS function with the desired functionality. The PROS developers were given access to internal VEX documentation about the SDK, so their usage of it can generally be considered canonical.
 
-For example, the PROS function for moving a motor, `motor_move_voltage`, is effectively a wrapper for `vexDeviceMotorVoltageSet` with some extra mutex and negation logic tacked on. From this, one can infer that `vexDeviceMotorVoltageSet` outputs a certain voltage to the specified motor using the value given in **millivolts**.
+For example, the PROS function for moving a motor, `motor_move_voltage`, is effectively a wrapper for `vexDeviceMotorVoltageSet` with some extra mutex and negation logic tacked on. From this, one can infer that `vexDeviceMotorVoltageSet` outputs a certain voltage to the specified motor using the value given in millivolts.
 
 ```c
 // Copyright (c) 2017-2024, Purdue University ACM SIGBots.
