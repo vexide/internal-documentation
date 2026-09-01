@@ -24,6 +24,7 @@ This section contains the initial values of some common system registers.
 
 ```txt
 SCTLR: 0b00001000110001010001100001111101
+SCR: 0b0
 ```
 
 ### Stack Sizes
