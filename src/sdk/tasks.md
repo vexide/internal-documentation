@@ -4,7 +4,7 @@ VEXos has a builtin cooperative task scheduler which is used to maintain interna
 
 ## Task Types
 
-**Simple tasks** are based around a callback and a next-run-timestamp. The scheduler tracks when each simple task is due to next run and invokes the callback each time its loop interval has elapsed. Most builtin system tasks are Simple tasks.
+**Simple tasks** are based around a callback and a next-run-timestamp. The scheduler tracks when each simple task is due to next run and invokes the callback each time its loop interval has elapsed. All builtin system tasks are Simple tasks.
 
 **Full tasks** behave more like OS threads: each has its own stack and supports sleeping. These are used to implement VEXcode's threads and tasks API. They are most useful when it'd be too difficult to break a long-running task into a state machine.
 
