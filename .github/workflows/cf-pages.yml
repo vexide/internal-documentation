@@ -24,11 +24,9 @@ jobs:
       - run: mdbook build
 
       - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: b1721f81ad0d3eecf8aa1ac29588ede8
-          projectName: internal-documentation
-          directory: book
+          command: pages deploy book --project-name=internal-documentation --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
