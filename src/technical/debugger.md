@@ -1,5 +1,8 @@
 # VEX V5 Debugger (v5gdb) Internals
 
+> This page is for people who want to understand how v5gdb works.
+> You might be looking for the [v5gdb user manual](https://github.com/vexide/v5gdb/wiki) instead.
+
 The vexide team has developed v5gdb, an [on-device debugger](https://github.com/vexide/v5gdb) for the VEX V5 platform to satisfy a [long-term interest](https://www.vexforum.com/t/debugger-for-vex-v5/91619) by the VEX community for better debugging tools. This chapter will attempt to give an overview of how v5gdb works and the problems we needed to solve to create it.
 
 ## Previous Work
